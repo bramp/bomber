@@ -1,0 +1,607 @@
+
+bomber.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Bomberman
+  rotate: false
+  xy: 1, 1
+  size: 576, 576
+  orig: 576, 576
+  offset: 0, 0
+  index: -1
+
+bomber2.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+title_flat
+  rotate: false
+  xy: 1, 1
+  size: 576, 576
+  orig: 576, 576
+  offset: 0, 0
+  index: -1
+
+bomber3.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Creep/Back/Creep_B_f04
+  rotate: false
+  xy: 1, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+Creep/Back/Creep_B_f02
+  rotate: false
+  xy: 67, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+Creep/Back/Creep_B_f03
+  rotate: false
+  xy: 133, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+Creep/Back/Creep_B_f00
+  rotate: false
+  xy: 133, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+Creep/Back/Creep_B_f01
+  rotate: false
+  xy: 199, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+Creep/Back/Creep_B_f05
+  rotate: false
+  xy: 265, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+
+bomber4.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Creep/Side/Creep_S_f01
+  rotate: false
+  xy: 1, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+Creep/Side/Creep_S_f03
+  rotate: false
+  xy: 67, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+Creep/Side/Creep_S_f06
+  rotate: false
+  xy: 133, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+Creep/Side/Creep_S_f00
+  rotate: false
+  xy: 199, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+Creep/Side/Creep_S_f02
+  rotate: false
+  xy: 265, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+Creep/Side/Creep_S_f04
+  rotate: false
+  xy: 331, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+Creep/Side/Creep_S_f05
+  rotate: false
+  xy: 397, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+
+bomber5.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Creep/Front/Creep_F_f04
+  rotate: false
+  xy: 1, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+Creep/Front/Creep_F_f02
+  rotate: false
+  xy: 67, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+Creep/Front/Creep_F_f00
+  rotate: false
+  xy: 133, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+Creep/Front/Creep_F_f03
+  rotate: false
+  xy: 133, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+Creep/Front/Creep_F_f01
+  rotate: false
+  xy: 199, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+Creep/Front/Creep_F_f05
+  rotate: false
+  xy: 265, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+
+bomber6.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Powerups/FlamePowerup
+  rotate: false
+  xy: 1, 1
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+Powerups/BombPowerup
+  rotate: false
+  xy: 35, 1
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+Powerups/SpeedPowerup
+  rotate: false
+  xy: 69, 1
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+
+bomber7.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Flame/Flame_F04
+  rotate: false
+  xy: 1, 1
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+Flame/Flame_F02
+  rotate: false
+  xy: 51, 1
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+Flame/Flame_f01
+  rotate: false
+  xy: 101, 1
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+Flame/Flame_f00
+  rotate: false
+  xy: 151, 1
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+Flame/Flame_F03
+  rotate: false
+  xy: 201, 1
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+
+bomber8.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Bomb/Bomb_f02
+  rotate: false
+  xy: 1, 1
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+Bomb/Bomb_f03
+  rotate: false
+  xy: 51, 1
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+Bomb/Bomb_f01
+  rotate: false
+  xy: 101, 1
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+
+bomber9.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Blocks/BackgroundTile
+  rotate: false
+  xy: 1, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+Blocks/ExplodableBlock
+  rotate: false
+  xy: 67, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+Blocks/Portal
+  rotate: false
+  xy: 133, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+Blocks/SolidBlock
+  rotate: false
+  xy: 199, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+
+bomber10.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Menu/title_background
+  rotate: false
+  xy: 1, 84
+  size: 576, 576
+  orig: 576, 576
+  offset: 0, 0
+  index: -1
+Menu/Control_PlayerTwo
+  rotate: false
+  xy: 1, 59
+  size: 160, 23
+  orig: 160, 23
+  offset: 0, 0
+  index: -1
+Menu/Control_PlayerOne
+  rotate: false
+  xy: 579, 637
+  size: 151, 23
+  orig: 151, 23
+  offset: 0, 0
+  index: -1
+Menu/Two_Players_Normal
+  rotate: false
+  xy: 1, 30
+  size: 132, 27
+  orig: 132, 27
+  offset: 0, 0
+  index: -1
+Menu/One_Player_Normal
+  rotate: false
+  xy: 579, 608
+  size: 132, 27
+  orig: 132, 27
+  offset: 0, 0
+  index: -1
+Menu/One_Player_Hover
+  rotate: false
+  xy: 1, 1
+  size: 132, 27
+  orig: 132, 27
+  offset: 0, 0
+  index: -1
+Menu/Two_Players_Hover
+  rotate: false
+  xy: 579, 579
+  size: 132, 27
+  orig: 132, 27
+  offset: 0, 0
+  index: -1
+
+bomber11.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Menu/title_titletext
+  rotate: false
+  xy: 1, 1
+  size: 576, 576
+  orig: 576, 576
+  offset: 0, 0
+  index: -1
+
+bomber12.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Bomberman/Back/Bman_B
+  rotate: false
+  xy: 1, 1
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 4
+Bomberman/Back/Bman_B
+  rotate: false
+  xy: 1, 1
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 0
+Bomberman/Back/Bman_B
+  rotate: false
+  xy: 67, 1
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 3
+Bomberman/Back/Bman_B
+  rotate: false
+  xy: 133, 1
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 5
+Bomberman/Back/Bman_B
+  rotate: false
+  xy: 199, 1
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 1
+Bomberman/Back/Bman_B
+  rotate: false
+  xy: 265, 1
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 7
+Bomberman/Back/Bman_B
+  rotate: false
+  xy: 331, 1
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 6
+Bomberman/Back/Bman_B
+  rotate: false
+  xy: 397, 1
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 2
+
+bomber13.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Bomberman/Left/Bman_L
+  rotate: false
+  xy: 1, 261
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 6
+Bomberman/Left/Bman_L
+  rotate: false
+  xy: 1, 131
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 4
+Bomberman/Left/Bman_L
+  rotate: false
+  xy: 67, 261
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 0
+Bomberman/Left/Bman_L
+  rotate: false
+  xy: 1, 1
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 1
+Bomberman/Left/Bman_L
+  rotate: false
+  xy: 67, 131
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 3
+Bomberman/Left/Bman_L
+  rotate: false
+  xy: 133, 261
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 7
+Bomberman/Left/Bman_L
+  rotate: false
+  xy: 67, 1
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 2
+Bomberman/Left/Bman_L
+  rotate: false
+  xy: 133, 131
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 5
+
+bomber14.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Bomberman/Right/Bman_R
+  rotate: false
+  xy: 1, 261
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 6
+Bomberman/Right/Bman_R
+  rotate: false
+  xy: 1, 131
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 2
+Bomberman/Right/Bman_R
+  rotate: false
+  xy: 67, 261
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 7
+Bomberman/Right/Bman_R
+  rotate: false
+  xy: 1, 1
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 1
+Bomberman/Right/Bman_R
+  rotate: false
+  xy: 67, 131
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 5
+Bomberman/Right/Bman_R
+  rotate: false
+  xy: 133, 261
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 3
+Bomberman/Right/Bman_R
+  rotate: false
+  xy: 67, 1
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 0
+Bomberman/Right/Bman_R
+  rotate: false
+  xy: 133, 131
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 4
+
+bomber15.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Bomberman/Front/Bman_F
+  rotate: false
+  xy: 1, 261
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 4
+Bomberman/Front/Bman_F
+  rotate: false
+  xy: 1, 131
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 6
+Bomberman/Front/Bman_F
+  rotate: false
+  xy: 67, 261
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 0
+Bomberman/Front/Bman_F
+  rotate: false
+  xy: 1, 1
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 7
+Bomberman/Front/Bman_F
+  rotate: false
+  xy: 67, 131
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 3
+Bomberman/Front/Bman_F
+  rotate: false
+  xy: 133, 261
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 5
+Bomberman/Front/Bman_F
+  rotate: false
+  xy: 67, 1
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 1
+Bomberman/Front/Bman_F
+  rotate: false
+  xy: 133, 131
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 2
