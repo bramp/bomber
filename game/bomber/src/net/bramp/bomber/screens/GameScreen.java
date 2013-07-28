@@ -1,5 +1,6 @@
 package net.bramp.bomber.screens;
 
+import net.bramp.bomber.Config;
 import net.bramp.bomber.Map;
 import net.bramp.bomber.Player;
 
@@ -13,7 +14,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 public class GameScreen implements ApplicationListener {
 
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = Config.DEBUG;
 	
 	private TextureAtlas atlas;
 	private Map map;

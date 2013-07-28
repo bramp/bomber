@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
 
 public final class Player extends Sprite {
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = Config.DEBUG;
 
 	public static final int STOP  = -1;
 	public static final int UP    = 0;

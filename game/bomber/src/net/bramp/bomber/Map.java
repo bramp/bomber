@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.google.common.base.Preconditions;
 
 public final class Map {
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = Config.DEBUG;
 	
 	public static final byte BLANK = 0x0; // 0b0000
 	public static final byte WALL  = 0x1; // 0b0001
