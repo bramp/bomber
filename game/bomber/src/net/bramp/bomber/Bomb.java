@@ -2,7 +2,6 @@ package net.bramp.bomber;
 
 import net.bramp.bomber.screens.GameScreen;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public final class Bomb extends AnimatedSprite implements Mappable {
@@ -26,21 +25,14 @@ public final class Bomb extends AnimatedSprite implements Mappable {
 		this.owner = owner;
 
 		// Setup textures
-		final TextureAtlas atlas = game.getTextureAtlas();
-
-		TextureRegion[] frames = new TextureRegion[3];
-		for (int i = 0; i < frames.length; i++) {
-			frames[i] = atlas.findRegion("Bomb", i);
-		}
-		setFrames(frames);
-
+		TextureRegion frames[] = game.getTextureRepository().getBomb();
 
 		// Setup sprite size / original image
 		TextureRegion first = frames[0];
 		final float width  = first.getRegionWidth();
 		final float height = first.getRegionHeight();
 		setSize(width, height);
-
+		setFrames(frames);
 	}
 
 

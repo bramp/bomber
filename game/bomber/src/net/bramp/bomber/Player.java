@@ -5,7 +5,6 @@ import net.bramp.bomber.screens.GameScreen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public final class Player extends AnimatedSprite implements Mappable {
@@ -22,15 +21,10 @@ public final class Player extends AnimatedSprite implements Mappable {
 	 */
 	private static final int WALKING_DISTANCE = 4;
 	
-	private static final int WALKING_FRAMES = 8;
-	
 	final GameScreen game;
 	final Map map;
 
-	/**
-	 * Frames of the player, WALKING_FRAMES * 4 directions
-	 */
-	final TextureRegion[][] walking_frames = new TextureRegion[4][WALKING_FRAMES];
+	final TextureRegion[][] walking_frames;
 	
 	/**
 	 * Which direction am I facing
@@ -59,23 +53,16 @@ public final class Player extends AnimatedSprite implements Mappable {
 		this.map  = game.getMap();
 
 		// Setup textures
-		final TextureAtlas atlas = game.getTextureAtlas();
-
-		for (int i = 0; i < WALKING_FRAMES; i++) {
-			walking_frames[UP][i]    = atlas.findRegion("Bman_B", i);
-			walking_frames[DOWN][i]  = atlas.findRegion("Bman_F", i);
-			walking_frames[LEFT][i]  = atlas.findRegion("Bman_L", i);
-			walking_frames[RIGHT][i] = atlas.findRegion("Bman_R", i);
-		}
+		walking_frames = game.getTextureRepository().getPlayerWalking();
 
 		// Setup sprite size / original image
-		setFrames( walking_frames[walking_direction] );
 		TextureRegion first = walking_frames[walking_direction][0];
 
 		// Size of the sprite
 		final float width  = first.getRegionWidth();
 		final float height = first.getRegionHeight();
 		setSize(width, height);
+		setFrames( walking_frames[walking_direction] );
 
 		// Offset from the spite's edge to the side of the tile
 		offset_x = (width  - map.getTileWidth()) / 2;

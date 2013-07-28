@@ -5,7 +5,6 @@ import net.bramp.bomber.screens.GameScreen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.google.common.base.Preconditions;
 
@@ -28,7 +27,7 @@ public final class Map {
 	static final int block_height = 64;
 
 	private final GameScreen game;
-	private final TextureRegion[] textures = new TextureRegion[16];
+	private final TextureRegion[] textures;
 	
 	//
 	final int width, height;
@@ -40,14 +39,7 @@ public final class Map {
 
 		this.game = game;
 
-		final TextureAtlas atlas = game.getTextureAtlas();
-		textures[Map.BLANK] = atlas.findRegion("BackgroundTile");
-		textures[Map.WALL]  = atlas.findRegion("SolidBlock");
-		textures[Map.BRICK] = atlas.findRegion("ExplodableBlock");
-
-		textures[Map.POWERUP_BOMB] = atlas.findRegion("BombPowerup");
-		textures[Map.POWERUP_FLAME] = atlas.findRegion("FlamePowerup");
-		textures[Map.POWERUP_SPEED] = atlas.findRegion("SpeedPowerup");
+		textures = game.getTextureRepository().getMapTile();
 
 		this.width = width; this.height = height;
 		this.map = new byte[width][height];

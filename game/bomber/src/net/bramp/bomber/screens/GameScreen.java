@@ -6,6 +6,7 @@ import net.bramp.bomber.Bomb;
 import net.bramp.bomber.Config;
 import net.bramp.bomber.Map;
 import net.bramp.bomber.Player;
+import net.bramp.bomber.TextureRepository;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -25,6 +26,8 @@ public class GameScreen implements ApplicationListener {
 	private float now = 0.0f;
 	
 	private TextureAtlas atlas;
+	private TextureRepository textureRepo;
+
 	private Map map;
 	private final Player[] players = new Player[4];
 
@@ -50,6 +53,9 @@ public class GameScreen implements ApplicationListener {
 			Gdx.files.internal("data/bomber.txt"),
 			Gdx.files.internal("data")
 		);
+
+		// Load all the textures
+		textureRepo = new TextureRepository(atlas);
 		
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, w, h);
@@ -143,8 +149,8 @@ public class GameScreen implements ApplicationListener {
 		return players;
 	}
 
-	public TextureAtlas getTextureAtlas() {
-		return atlas;
+	public TextureRepository getTextureRepository() {
+		return textureRepo;
 	}
 
 	public float getMapX(int map_x) {
