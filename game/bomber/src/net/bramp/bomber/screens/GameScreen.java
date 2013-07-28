@@ -1,5 +1,8 @@
 package net.bramp.bomber.screens;
 
+import java.util.ArrayList;
+
+import net.bramp.bomber.Bomb;
 import net.bramp.bomber.Config;
 import net.bramp.bomber.Map;
 import net.bramp.bomber.Player;
@@ -15,6 +18,11 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 public class GameScreen implements ApplicationListener {
 
 	private static final boolean DEBUG = Config.DEBUG;
+
+	/**
+	 * Simple value of what time is now (in seconds from game start)
+	 */
+	private float now = 0.0f;
 	
 	private TextureAtlas atlas;
 	private Map map;
@@ -28,6 +36,9 @@ public class GameScreen implements ApplicationListener {
 	GameScreenInputProcessor inputProcessor;
 
 	BitmapFont debugFont;
+	
+	final ArrayList<Bomb> bombs = new ArrayList<Bomb>(16);
+
 	
 	@Override
 	public void create() {
@@ -66,11 +77,17 @@ public class GameScreen implements ApplicationListener {
 	}
 
 	public void update(float dt) {
+		now += dt;
+
 		switch (number_of_players) { // No breaks so it fall through
 			case 4: players[3].update(dt);
 			case 3: players[2].update(dt);
 			case 2: players[1].update(dt);
 			case 1: players[0].update(dt);
+		}
+		
+		for (int i = 0, len = bombs.size(); i < len; i++) {
+			bombs.get(i).update(dt);
 		}
 	}
 	
@@ -106,6 +123,10 @@ public class GameScreen implements ApplicationListener {
 		}
 	}
 
+	public float now() {
+		return now;
+	}
+	
 	@Override
 	public void resize(int width, int height) {
 	}
@@ -140,6 +161,16 @@ public class GameScreen implements ApplicationListener {
 
 	public BitmapFont getDebugFont() {
 		return debugFont;
+	}
+
+	/**
+	 * Drops a bomb
+	 * @param player
+	 * @param map_x
+	 * @param map_y
+	 */
+	public void dropBomb(Player player, int map_x, int map_y) {
+		bombs.add( new Bomb(this, player, map_x, map_y) );
 	}
 
 }

@@ -5,6 +5,7 @@ import java.util.Deque;
 
 import net.bramp.bomber.Player;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.google.common.base.Preconditions;
@@ -14,9 +15,15 @@ public class GameScreenInputProcessor implements InputProcessor {
 	public final GameScreen game;
 	public final Player[] players;
 
-	// We make some assumptions, lets check they are correct
-	// TODO remove warnings
 	{
+		assertSomeStuff();
+	}
+	
+	/**
+	 * We make some assumptions, lets check they are correct
+	 */
+	@SuppressWarnings("all")
+	private static void assertSomeStuff() {
 		Preconditions.checkArgument((Keys.UP - Keys.UP)    == Player.UP);
 		Preconditions.checkArgument((Keys.DOWN - Keys.UP)  == Player.DOWN);
 		Preconditions.checkArgument((Keys.LEFT - Keys.UP)  == Player.LEFT);
@@ -68,6 +75,13 @@ public class GameScreenInputProcessor implements InputProcessor {
 			stopMove(player, keycode);
 			return true;
 		}
+		if (keycode == Keys.SPACE) {
+			player.dropBomb();
+		}
+		
+		if (keycode == Keys.ESCAPE)
+			Gdx.app.exit();
+		
 		return false;
 	}
 
@@ -100,5 +114,4 @@ public class GameScreenInputProcessor implements InputProcessor {
 	public boolean mouseMoved(int screenX, int screenY) {
 		return false;
 	}
-	
 }
