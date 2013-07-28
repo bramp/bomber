@@ -1,0 +1,3 @@
+[submodule "libgdx"]
+	path = libgdx
+	url = git@github.com:libgdx/libgdx.git
