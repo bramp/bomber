@@ -2,14 +2,16 @@ package net.bramp.bomber;
 
 import net.bramp.bomber.screens.GameScreen;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
-import com.google.common.base.Preconditions;
 
 public final class Player extends Sprite {
+	private static final boolean DEBUG = true;
 
 	public static final int STOP  = -1;
 	public static final int UP    = 0;
@@ -62,6 +64,8 @@ public final class Player extends Sprite {
 	 * Coordinates on the map I am
 	 */
 	int map_x = 0, map_y = 0;
+	
+	final float offset_x, offset_y;
 
 	public Player(GameScreen game, int[] map_coord) {
 
@@ -77,15 +81,29 @@ public final class Player extends Sprite {
 			body[LEFT][i]  = atlas.findRegion("Bman_L", i);
 			body[RIGHT][i] = atlas.findRegion("Bman_R", i);
 		}
-
-		// Setup Positioning
-		map_x = map_coord[0]; map_y = map_coord[1];
-		setPosition(map.getScreenX(map_x), map.getScreenY(map_y));
-
+		
 		// Setup sprite size / original image
 		TextureRegion first = body[walking_direction][walking_frame];
-		setSize(first.getRegionWidth(), first.getRegionHeight());
 		setRegion(first);
+
+		float width  = first.getRegionWidth();
+		float height = first.getRegionHeight();
+
+		setSize(width, height);
+
+		offset_x = (getWidth() - map.getTileWidth()) / 2;
+		offset_y = (getHeight() - map.getTileHeight()) / 2;
+
+		setMapPosition(map_coord[0], map_coord[1]);
+	}
+	
+	public void setMapPosition(int map_x, int map_y) {
+		this.map_x = map_x;
+		this.map_y = map_y;
+		setPosition(
+			map.getScreenX(map_x) + offset_x,
+			map.getScreenY(map_y) + offset_y
+		);
 	}
 	
 	/**
@@ -93,34 +111,58 @@ public final class Player extends Sprite {
 	 * Checks bounds, so we can't walk through walls
 	 */
 	private void updatePosition() {
+		float x = getX(), y = getY();
 		float dX = 0.0f, dY = 0.0f;
 
 		switch (walking_direction) {
 			case UP:
-				// Is there a space above us?
-				if (map.isFree(map_x, map_y - 1))
+				if (!map.isFree(map_x, map_y + 1)) {
+					float above = map.getScreenY(map_y + 1) - getHeight() + offset_y;
+					dY = Math.min(WALKING_DISTANCE, above - y);
+				} else {
 					dY = WALKING_DISTANCE;
+				}
 				break;
+
 			case DOWN:
-				if (map.isFree(map_x, map_y + 1))
+				if (!map.isFree(map_x, map_y - 1)) {
+					float below = map.getScreenY(map_y) - offset_y;
+					dY = -Math.min(WALKING_DISTANCE, y - below);
+				} else {
 					dY = -WALKING_DISTANCE;
+				}
 				break;
+
 			case LEFT:
-				if (map.isFree(map_x - 1, map_y))
+				if (!map.isFree(map_x - 1, map_y)) {
+					float left = map.getScreenX(map_x) - offset_x;
+					dX = -Math.min(WALKING_DISTANCE, x - left);
+				} else {
 					dX = -WALKING_DISTANCE;
+				}
 				break;
+
 			case RIGHT:
-				if (map.isFree(map_x + 1, map_y))
+				if (!map.isFree(map_x + 1, map_y)) {
+					float right = map.getScreenX(map_x + 1) - getWidth() + offset_x;
+					dX = Math.min(WALKING_DISTANCE, right - x);
+				} else {
 					dX = WALKING_DISTANCE;
+				}
 				break;
 			default:
-				Preconditions.checkArgument(false, "Invalid moving direction " + walking_direction);
+				throw new IllegalArgumentException("Invalid moving direction " + walking_direction);
 		}
 
-		if (dX > 0.0f || dY > 0.0f)
+		if (dX != 0.0f || dY != 0.0f) {
 			translate(dX, dY);
+
+			// Update square (possibly)
+			map_x = map.getMapX(getX() + getWidth() / 2);
+			map_y = map.getMapY(getY() + getHeight() / 2);
+		}
 	}
-	
+
 	public void updateAnimationFrame(final float dt) {
 
 		if (walking) {
@@ -134,9 +176,7 @@ public final class Player extends Sprite {
 				setRegion( body[walking_direction][walking_frame] );				
 				updatePosition();
 			}
-
 		}
-
 	}
 
 	public void update (final float dt) {
@@ -145,10 +185,15 @@ public final class Player extends Sprite {
 		//super.update(dt);
 	}
 
-
 	@Override
-	public void draw(SpriteBatch spriteBatch) {
-		super.draw(spriteBatch);
+	public void draw(SpriteBatch batch) {
+		super.draw(batch);
+
+		if (DEBUG) {
+			final BitmapFont font = game.getDebugFont();
+			font.setColor(Color.BLACK);
+			font.draw(batch, map_x + "," + map_y, getX(), getY() + getHeight() / 2);
+		}
 	}
 
 	public static boolean within(Vector3 v, int width, int height) {

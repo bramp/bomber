@@ -7,16 +7,16 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class GameScreen implements ApplicationListener {
 
-	private Map map = new Map(15, 13);
-
+	private static final boolean DEBUG = true;
+	
 	private TextureAtlas atlas;
-	private final TextureRegion[] map_textures = new TextureRegion[16];
+	private Map map;
 	private final Player[] players = new Player[4];
 
 	private int number_of_players = 0;
@@ -26,6 +26,8 @@ public class GameScreen implements ApplicationListener {
 
 	GameScreenInputProcessor inputProcessor;
 
+	BitmapFont debugFont;
+	
 	@Override
 	public void create() {
 
@@ -42,26 +44,15 @@ public class GameScreen implements ApplicationListener {
 
 		batch = new SpriteBatch();
 
-		map_textures[Map.BLANK] = atlas.findRegion("BackgroundTile");
-		map_textures[Map.WALL]  = atlas.findRegion("SolidBlock");
-		map_textures[Map.BRICK] = atlas.findRegion("ExplodableBlock");
-
-		map_textures[Map.POWERUP_BOMB] = atlas.findRegion("BombPowerup");
-		map_textures[Map.POWERUP_FLAME] = atlas.findRegion("FlamePowerup");
-		map_textures[Map.POWERUP_SPEED] = atlas.findRegion("SpeedPowerup");
+		map = new Map(this, 15, 13);
 
 		players[number_of_players++] = new Player(this, map.getPlayerStart(0));
 		players[number_of_players++] = new Player(this, map.getPlayerStart(1));
 		players[number_of_players++] = new Player(this, map.getPlayerStart(2));
 		players[number_of_players++] = new Player(this, map.getPlayerStart(3));
 
-		/*
-		sprite = new Sprite(region);
-		sprite.setSize(0.9f, 0.9f * sprite.getHeight() / sprite.getWidth());
-		sprite.setOrigin(sprite.getWidth()/2, sprite.getHeight()/2);
-		sprite.setPosition(-sprite.getWidth()/2, -sprite.getHeight()/2);
-		*/
-
+		debugFont = new BitmapFont();
+		
 		inputProcessor = new GameScreenInputProcessor(this);
 		Gdx.input.setInputProcessor(inputProcessor);
 
@@ -96,13 +87,17 @@ public class GameScreen implements ApplicationListener {
 		batch.begin();
 
 		try {
-			map.render(batch, map_textures);
+			map.render(batch);
 
 			switch (number_of_players) { // No breaks so it fall throughs
 				case 4: players[3].draw(batch);
 				case 3: players[2].draw(batch);
 				case 2: players[1].draw(batch);
 				case 1: players[0].draw(batch);
+			}
+			
+			if (DEBUG) {
+				debugFont.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 20, 20);
 			}
 
 		} finally {
@@ -140,6 +135,10 @@ public class GameScreen implements ApplicationListener {
 
 	public Map getMap() {
 		return map;
+	}
+
+	public BitmapFont getDebugFont() {
+		return debugFont;
 	}
 
 }

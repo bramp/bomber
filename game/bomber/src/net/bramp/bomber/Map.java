@@ -1,10 +1,17 @@
 package net.bramp.bomber;
 
+import net.bramp.bomber.screens.GameScreen;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.google.common.base.Preconditions;
 
 public final class Map {
+	private static final boolean DEBUG = true;
+	
 	public static final byte BLANK = 0x0; // 0b0000
 	public static final byte WALL  = 0x1; // 0b0001
 	public static final byte BRICK = 0x2; // 0b0010
@@ -20,16 +27,31 @@ public final class Map {
 	static final int block_width = 64;
 	static final int block_height = 64;
 
+	private final GameScreen game;
+	private final TextureRegion[] textures = new TextureRegion[16];
+	
 	//
 	final int width, height;
 	final byte[][] map;
 	
-	public Map(int width, int height) {
+	public Map(GameScreen game, int width, int height) {
 		Preconditions.checkArgument( width >= 5 && (width - 3) % 2 == 0);
 		Preconditions.checkArgument( height >= 5 && (height - 3) % 2 == 0);
-		this.width = width;
-		this.height = height;
+
+		this.game = game;
+
+		final TextureAtlas atlas = game.getTextureAtlas();
+		textures[Map.BLANK] = atlas.findRegion("BackgroundTile");
+		textures[Map.WALL]  = atlas.findRegion("SolidBlock");
+		textures[Map.BRICK] = atlas.findRegion("ExplodableBlock");
+
+		textures[Map.POWERUP_BOMB] = atlas.findRegion("BombPowerup");
+		textures[Map.POWERUP_FLAME] = atlas.findRegion("FlamePowerup");
+		textures[Map.POWERUP_SPEED] = atlas.findRegion("SpeedPowerup");
+
+		this.width = width; this.height = height;
 		this.map = new byte[width][height];
+
 		setupWalls();
 	}
 
@@ -72,7 +94,14 @@ public final class Map {
 		map[width - 2][height - 2] = BLANK; map[width - 3][height - 2] = BLANK; map[width - 2][height - 3] = BLANK;
 	}
 
-	public void render(SpriteBatch batch, TextureRegion[] map_textures) {
+	public void render(SpriteBatch batch) {
+		
+		final BitmapFont font;
+		if (DEBUG) {
+			font = game.getDebugFont();
+			font.setColor(Color.WHITE);
+		}
+
 		// Local copies of the vars
 		final int width = this.width; 
 		final int height = this.height;
@@ -80,7 +109,13 @@ public final class Map {
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				int block = map[x][y] & BLOCK_MASK;
-				batch.draw(map_textures[block], x * block_width, y * block_height, block_width, block_height);
+				float screenX = x * block_width;
+				float screenY = y * block_height;
+
+				batch.draw(textures[block], screenX, screenY, block_width, block_height);
+
+				if (DEBUG)
+					font.draw(batch, x + "," + y, screenX, screenY + block_height);
 			}
 		}
 	}
@@ -118,6 +153,14 @@ public final class Map {
 		return map_y * block_height;
 	}
 	
+	public int getMapX(float screen_x) {
+		return (int) (screen_x / block_width);
+	}
+
+	public int getMapY(float screen_y) {
+		return (int) (screen_y / block_height);
+	}
+
 	/**
 	 * Is this square free to walk on?
 	 * @param map_x
@@ -126,5 +169,13 @@ public final class Map {
 	 */
 	public boolean isFree(int map_x, int map_y) {
 		return (map[map_x][map_y] & BLOCK_MASK) == BLANK;
+	}
+	
+	public int getTileWidth() {
+		return block_width;
+	}
+	
+	public int getTileHeight() {
+		return block_height;
 	}
 }
