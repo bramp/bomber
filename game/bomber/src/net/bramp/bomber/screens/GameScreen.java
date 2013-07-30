@@ -6,6 +6,7 @@ import net.bramp.bomber.Bomb;
 import net.bramp.bomber.Config;
 import net.bramp.bomber.Map;
 import net.bramp.bomber.Player;
+import net.bramp.bomber.SpriteInterface;
 import net.bramp.bomber.TextureRepository;
 
 import com.badlogic.gdx.ApplicationListener;
@@ -13,8 +14,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.SnapshotArray;
 
 public class GameScreen implements ApplicationListener {
 
@@ -40,9 +44,8 @@ public class GameScreen implements ApplicationListener {
 
 	BitmapFont debugFont;
 	
-	final ArrayList<Bomb> bombs = new ArrayList<Bomb>(16);
+	final SnapshotArray<SpriteInterface> sprites = new SnapshotArray<SpriteInterface>(false, 16, SpriteInterface.class);
 
-	
 	@Override
 	public void create() {
 
@@ -91,12 +94,14 @@ public class GameScreen implements ApplicationListener {
 			case 2: players[1].update(dt);
 			case 1: players[0].update(dt);
 		}
-		
-		for (int i = 0, len = bombs.size(); i < len; i++) {
-			bombs.get(i).update(dt);
+
+		SpriteInterface[] items = sprites.begin();
+		for (int i = 0, len = sprites.size; i < len; i++) {
+			items[i].update(dt);
 		}
+		sprites.end();
 	}
-	
+
 	@Override
 	public void render() {
 
@@ -113,13 +118,18 @@ public class GameScreen implements ApplicationListener {
 		try {
 			map.render(batch);
 
+			SpriteInterface[] items = sprites.items;
+			for (int i = 0, len = sprites.size; i < len; i++) {
+				items[i].draw(batch);
+			}
+
 			switch (number_of_players) { // No breaks so it fall throughs
 				case 4: players[3].draw(batch);
 				case 3: players[2].draw(batch);
 				case 2: players[1].draw(batch);
 				case 1: players[0].draw(batch);
 			}
-			
+
 			if (DEBUG) {
 				debugFont.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 20, 20);
 			}
@@ -169,14 +179,41 @@ public class GameScreen implements ApplicationListener {
 		return debugFont;
 	}
 
+	public void addSprite(SpriteInterface sprite) {
+		sprites.add(sprite);
+	}
+
+	public void removeSprite(SpriteInterface sprite) {
+		sprites.removeValue(sprite, true);
+	}
+	
 	/**
 	 * Drops a bomb
+	 * returns false if it's not allowed
 	 * @param player
 	 * @param map_x
 	 * @param map_y
 	 */
-	public void dropBomb(Player player, int map_x, int map_y) {
-		bombs.add( new Bomb(this, player, map_x, map_y) );
+	public boolean dropBomb(Player player, int map_x, int map_y) {
+		// TODO check tile doesn't already have a bomb
+		addSprite( new Bomb(this, player, map_x, map_y) );
+		return true;
 	}
 
+	public void bombExploded(Bomb bomb) {
+		removeSprite(bomb);
+		bomb.getOwner().bombExploded(bomb);
+
+		// Add flames
+
+		// Players check (each update) if they are on a flame
+	}
+
+	/**
+	 * A player died
+	 * @param player
+	 */
+	public void killPlayer(Player player) {
+		
+	}
 }

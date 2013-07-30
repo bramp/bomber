@@ -9,21 +9,23 @@ public abstract class AnimatedSprite extends Sprite {
 	/**
 	 * Time between image frames (in seconds)
 	 */
-	private float frame_interval = 0.01f;
+	private float frame_interval;
 
-	private TextureRegion[] frames;
+	protected TextureRegion[] frames;
 
 	/**
 	 * Which animation frame I'm on
 	 */
-	int animation_frame = 0;
+	protected int animation_frame = 0;
 
 	/**
 	 * How far into the animation frame we are (in seconds)
 	 */
-	float animation_time = 0.0f;
+	protected float animation_time = 0.0f;
 
-	public AnimatedSprite() {}
+	public AnimatedSprite(float frame_interval) {
+		this.frame_interval = frame_interval;
+	}
 
 	/**
 	 * Called when each single frame finishes
@@ -71,5 +73,4 @@ public abstract class AnimatedSprite extends Sprite {
 	public void update (final float dt) {
 		updateAnimationFrame(dt);
 	}
-
 }

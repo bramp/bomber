@@ -1,13 +1,11 @@
 package net.bramp.bomber.screens;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-
 import net.bramp.bomber.Player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.utils.IntArray;
 import com.google.common.base.Preconditions;
 
 public class GameScreenInputProcessor implements InputProcessor {
@@ -38,7 +36,7 @@ public class GameScreenInputProcessor implements InputProcessor {
 	// Holds which keys are currently down, and remembers which one was last
 	// this enables us to ensure we are always moving in the right direction after
 	// a complex sequence of key presses (left down, right down, right up - we should move left)
-	Deque<Integer> directionStack = new ArrayDeque<Integer>();
+	IntArray directionStack = new IntArray(true, 4);
 
 	private void startMove(Player player, int keycode) {
 		directionStack.add(keycode);
@@ -47,12 +45,11 @@ public class GameScreenInputProcessor implements InputProcessor {
 	}
 
 	private void stopMove(Player player, int keycode) {
-		directionStack.remove(keycode);
-
-		Integer lastKeycode = directionStack.peekLast();
-		if (lastKeycode == null) {
+		directionStack.removeValue(keycode);
+		if (directionStack.size == 0) {
 			player.move(Player.STOP);
 		} else {
+			int lastKeycode = directionStack.peek();
 			player.move(lastKeycode - Keys.UP);
 		}
 	}

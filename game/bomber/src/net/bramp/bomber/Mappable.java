@@ -9,4 +9,6 @@ package net.bramp.bomber;
 public interface Mappable {
 	public int getMapX();
 	public int getMapY();
+	
+	public void setMapPosition(int map_x, int map_y);
 }

@@ -37,6 +37,11 @@ public final class Player extends AnimatedSprite implements Mappable {
 	boolean walking = false;
 
 	/**
+	 * Am I alive?
+	 */
+	boolean alive = true;
+	
+	/**
 	 * Coordinates on the map I am
 	 */
 	int map_x = 0, map_y = 0;
@@ -48,6 +53,7 @@ public final class Player extends AnimatedSprite implements Mappable {
 	final float offset_x, offset_y;
 
 	public Player(GameScreen game, int[] map_coord) {
+		super(0.01f);
 
 		this.game = game;
 		this.map  = game.getMap();
@@ -121,6 +127,7 @@ public final class Player extends AnimatedSprite implements Mappable {
 				if (!map.isFree(map_x + 1, map_y)) {
 					float right = map.getScreenX(map_x + 1) - getWidth() + offset_x;
 					dX = Math.min(WALKING_DISTANCE, right - x);
+					System.out.printf("right %f %f %f\n", getX(), right, dX);
 				} else {
 					dX = WALKING_DISTANCE;
 				}
@@ -146,6 +153,10 @@ public final class Player extends AnimatedSprite implements Mappable {
 		if (walking) {
 			updateAnimationFrame(dt);
 		}
+
+		if (map.isOnFire(map_x, map_y)) {
+			die();
+		}
 	}
 
 	@Override
@@ -159,6 +170,10 @@ public final class Player extends AnimatedSprite implements Mappable {
 		}
 	}
 
+	protected void die() {
+		alive = false;
+		game.killPlayer(this);
+	}
 	
 	/**
 	 * Start/stop moving in direction
@@ -181,8 +196,18 @@ public final class Player extends AnimatedSprite implements Mappable {
 		if (deployed_bombs >= allowed_bombs)
 			return;
 
-		game.dropBomb(this, map_x, map_y);
-		deployed_bombs++;
+		if (game.dropBomb(this, map_x, map_y)) {
+			deployed_bombs++;
+		}
+	}
+
+	/**
+	 * Callback when one of my bombs explodes
+	 * @param bomb
+	 */
+	public void bombExploded(Bomb bomb) {
+		deployed_bombs--;
+		assert(deployed_bombs >= 0);
 	}
 
 	@Override
@@ -193,6 +218,10 @@ public final class Player extends AnimatedSprite implements Mappable {
 	@Override
 	public int getMapY() {
 		return map_y;
+	}
+
+	public int getFlameLength() {
+		return flame_length;
 	}
 
 }
