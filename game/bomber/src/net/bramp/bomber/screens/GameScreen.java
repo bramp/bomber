@@ -1,7 +1,5 @@
 package net.bramp.bomber.screens;
 
-import java.util.ArrayList;
-
 import net.bramp.bomber.Bomb;
 import net.bramp.bomber.Config;
 import net.bramp.bomber.Map;
@@ -14,10 +12,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.SnapshotArray;
 
 public class GameScreen implements ApplicationListener {
@@ -32,10 +28,10 @@ public class GameScreen implements ApplicationListener {
 	private TextureAtlas atlas;
 	private TextureRepository textureRepo;
 
-	private Map map;
-	private final Player[] players = new Player[4];
+	public Map map;
+	public final Player[] players = new Player[4];
 
-	private int number_of_players = 0;
+	public int number_of_players = 0;
 
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
@@ -43,7 +39,7 @@ public class GameScreen implements ApplicationListener {
 	GameScreenInputProcessor inputProcessor;
 
 	BitmapFont debugFont;
-	
+
 	final SnapshotArray<SpriteInterface> sprites = new SnapshotArray<SpriteInterface>(false, 16, SpriteInterface.class);
 
 	@Override
@@ -123,7 +119,7 @@ public class GameScreen implements ApplicationListener {
 				items[i].draw(batch);
 			}
 
-			switch (number_of_players) { // No breaks so it fall throughs
+			switch (number_of_players) { // No breaks so it fall through
 				case 4: players[3].draw(batch);
 				case 3: players[2].draw(batch);
 				case 2: players[1].draw(batch);
@@ -201,8 +197,8 @@ public class GameScreen implements ApplicationListener {
 	}
 
 	public void bombExploded(Bomb bomb) {
-		removeSprite(bomb);
-		bomb.getOwner().bombExploded(bomb);
+		//removeSprite(bomb);
+		//bomb.getOwner().bombExploded(bomb);
 
 		// Add flames
 

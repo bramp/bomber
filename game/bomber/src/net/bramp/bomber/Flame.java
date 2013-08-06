@@ -1,28 +1,25 @@
 package net.bramp.bomber;
 
-import java.util.ArrayList;
-
 import net.bramp.bomber.screens.GameScreen;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.Array;
 
-public final class Flame extends AnimatedSprite implements Mappable, SpriteInterface {
+public final class Flame extends MapObject implements SpriteInterface, AnimationInterface {
 
 	final GameScreen game;
-	final Map map;
 
 	/**
 	 * Coordinates of the center of the flame
 	 */
-	final int map_x, map_y;
 	int min_x, min_y, max_x, max_y;
 
 	final int flame_length;
 	
 	boolean isOnFire = true;
-	
+
+	final AnimationComponent animation;
+
 	/**
 	 * Creates a new flame (starting at map_x,map_y)
 	 * @param game
@@ -30,35 +27,21 @@ public final class Flame extends AnimatedSprite implements Mappable, SpriteInter
 	 * @param map_y
 	 */
 	public Flame(GameScreen game, int map_x, int map_y, int flame_length) {
-		super(1.0f);
+		super(game.map);
 
 		this.game = game;
-		this.map  = game.getMap();
-
-		this.map_x = map_x;
-		this.map_y = map_y;
-		
 		this.flame_length = flame_length;
 
-		/*
+		this.animation = new AnimationComponent(0.5f);
+
 		// Setup textures
 		TextureRegion frames[] = game.getTextureRepository().getFlame();
+		animation.setFrames(this, frames);
 
-		// Setup sprite size / original image
-		TextureRegion first = frames[0];
-		final float width  = first.getRegionWidth();
-		final float height = first.getRegionHeight();
-		setSize(width, height);
-		setFrames(frames);
+		tile_margin_x = (map.getTileWidth()  - getWidth()) / 2;
+		tile_margin_y = (map.getTileHeight() - getHeight()) / 2;
 
-		offset_x = (map.getTileWidth() - getWidth()) / 2;
-		offset_y = (map.getTileHeight() - getHeight()) / 2;
-
-		setPosition(
-			map.getScreenX(map_x) + offset_x,
-			map.getScreenY(map_y) + offset_y
-		);
-		*/
+		setMapPosition(map_x, map_y);
 	}
 
 	/**
@@ -103,27 +86,23 @@ public final class Flame extends AnimatedSprite implements Mappable, SpriteInter
 		}
 	}
 
-	public void setMapPosition(int map_x, int map_y) {
-		setPosition(
-			map.getScreenX(map_x),
-			map.getScreenY(map_y)
-		);
-	}
-	
 	public void update (final float dt) {
-		super.update(dt);
-		
+		animation.update(this, dt);
+
 		// Ensure all squares are on fire (no need if we keep track elsewhere)
 		map.setOnFire(map_x, map_y, min_x, max_x, min_y, max_y, isOnFire);
 	}
 
 	@Override
-	protected void animationEnded() {
+	public void animationEnded() {
 		isOnFire = false;
-		//game.bombExploded(bomb)
+
 		map.setOnFire(map_x, map_y, min_x, max_x, min_y, max_y, isOnFire);
 	}
 
+	@Override
+	public void animationFrameEnded(int frame) {}
+	
 	public void draw(SpriteBatch batch) {
 		return; // Do nothing, drawing is handled by the map itself
 
@@ -155,16 +134,5 @@ public final class Flame extends AnimatedSprite implements Mappable, SpriteInter
 			items[i].draw(batch);
 		}
 		*/
-	}
-
-	@Override
-	public int getMapX() {
-		return map_x;
-	}
-
-
-	@Override
-	public int getMapY() {
-		return map_y;
 	}
 }

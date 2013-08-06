@@ -1,5 +1,6 @@
 package net.bramp.bomber.screens;
 
+import net.bramp.bomber.Direction;
 import net.bramp.bomber.Player;
 
 import com.badlogic.gdx.Gdx;
@@ -22,10 +23,10 @@ public class GameScreenInputProcessor implements InputProcessor {
 	 */
 	@SuppressWarnings("all")
 	private static void assertSomeStuff() {
-		Preconditions.checkArgument((Keys.UP - Keys.UP)    == Player.UP);
-		Preconditions.checkArgument((Keys.DOWN - Keys.UP)  == Player.DOWN);
-		Preconditions.checkArgument((Keys.LEFT - Keys.UP)  == Player.LEFT);
-		Preconditions.checkArgument((Keys.RIGHT - Keys.UP) == Player.RIGHT);
+		Preconditions.checkArgument((Keys.UP - Keys.UP)    == Direction.UP);
+		Preconditions.checkArgument((Keys.DOWN - Keys.UP)  == Direction.DOWN);
+		Preconditions.checkArgument((Keys.LEFT - Keys.UP)  == Direction.LEFT);
+		Preconditions.checkArgument((Keys.RIGHT - Keys.UP) == Direction.RIGHT);
 	}
 
 	public GameScreenInputProcessor(GameScreen game) {
@@ -47,7 +48,7 @@ public class GameScreenInputProcessor implements InputProcessor {
 	private void stopMove(Player player, int keycode) {
 		directionStack.removeValue(keycode);
 		if (directionStack.size == 0) {
-			player.move(Player.STOP);
+			player.move(Direction.STOP);
 		} else {
 			int lastKeycode = directionStack.peek();
 			player.move(lastKeycode - Keys.UP);

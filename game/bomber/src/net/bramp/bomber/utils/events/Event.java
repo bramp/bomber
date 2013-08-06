@@ -1,7 +1,6 @@
 package net.bramp.bomber.utils.events;
 
-public abstract class Event {
+import com.badlogic.gdx.utils.Pool.Poolable;
 
-	public abstract int getType();
-
+public abstract class Event implements Poolable {
 }

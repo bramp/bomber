@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.google.common.base.Preconditions;
 
-public abstract class AnimatedSprite extends Sprite {
+public class AnimationComponent {
 
 	/**
 	 * Time between image frames (in seconds)
@@ -23,54 +23,50 @@ public abstract class AnimatedSprite extends Sprite {
 	 */
 	protected float animation_time = 0.0f;
 
-	public AnimatedSprite(float frame_interval) {
+	/**
+	 * 
+	 * @param frame_interval Time between image frames (in seconds)
+	 */
+	public AnimationComponent(float frame_interval) {
 		this.frame_interval = frame_interval;
 	}
-
-	/**
-	 * Called when each single frame finishes
-	 * @param frame
-	 */
-	protected void animationFrameEnded(int frame) {}
-	
-	/**
-	 * Called when the sequence of frames ends
-	 */
-	protected void animationEnded() {}
 
 	/**
 	 * Sets the frames to display
 	 * resets animation_time and animation_frame
 	 * @param frames
 	 */
-	protected void setFrames(TextureRegion[] frames) {
+	protected void setFrames(final Sprite sprite, TextureRegion[] frames) {
 		Preconditions.checkNotNull(frames);
 		Preconditions.checkArgument(frames.length > 0);
 
 		this.frames = frames;
 		this.animation_frame = 0;
 		this.animation_time = 0.0f;
-		setRegion(frames[0]);
+
+		TextureRegion first = frames[0];
+		final float width  = first.getRegionWidth();
+		final float height = first.getRegionHeight();
+
+		sprite.setSize(width, height);
+		sprite.setRegion(first);
 	}
 
-	protected void updateAnimationFrame(final float dt) {
+	public void update(final AnimationInterface sprite, final float dt) {
 		animation_time += dt;
 		if (animation_time > frame_interval) {
 			animation_time -= frame_interval;
 
-			animationFrameEnded(animation_frame);
+			sprite.animationFrameEnded(animation_frame);
 
 			animation_frame++;
 			if (animation_frame >= frames.length) {
-				animation_frame = 0; // Loop
-				animationEnded();
+				// Loop the animation
+				animation_frame = 0;
+				sprite.animationEnded();
 			}
 
-			setRegion( frames[animation_frame] );
+			sprite.setRegion( frames[animation_frame] );
 		}
-	}
-
-	public void update (final float dt) {
-		updateAnimationFrame(dt);
 	}
 }

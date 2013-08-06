@@ -20,12 +20,12 @@ public class TextureRepository {
 
 		bomb  = findRegions(atlas, "Bomb");
 		flame = findRegions(atlas, "Flame");
-		
-		player_walking[Player.UP]    = findRegions(atlas, "Bman_B");
-		player_walking[Player.DOWN]  = findRegions(atlas, "Bman_F");
-		player_walking[Player.LEFT]  = findRegions(atlas, "Bman_L");
-		player_walking[Player.RIGHT] = findRegions(atlas, "Bman_R");
-		
+
+		player_walking[Direction.UP]    = findRegions(atlas, "Bman_B");
+		player_walking[Direction.DOWN]  = findRegions(atlas, "Bman_F");
+		player_walking[Direction.LEFT]  = findRegions(atlas, "Bman_L");
+		player_walking[Direction.RIGHT] = findRegions(atlas, "Bman_R");
+
 		map_tile = new TextureAtlas.AtlasRegion[16];
 		map_tile[Map.BLANK] = findRegion(atlas, "BackgroundTile");
 		map_tile[Map.WALL]  = findRegion(atlas, "SolidBlock");

@@ -2,7 +2,8 @@ package net.bramp.bomber.utils.events;
 
 import net.bramp.bomber.utils.ArrayQueue;
 
-import com.badlogic.gdx.utils.IntMap;
+import com.badlogic.gdx.utils.IdentityMap;
+import com.badlogic.gdx.utils.Pools;
 
 /**
  * Simple EventBus that uses some of the libgdx collections.
@@ -11,7 +12,8 @@ import com.badlogic.gdx.utils.IntMap;
  */
 public class EventBus {
 
-	final IntMap<IdentitySet<EventSubscriber>> subscription = new IntMap<IdentitySet<EventSubscriber>>();
+	final IdentityMap<Class<? extends Event>, IdentitySet<EventSubscriber>> subscription = 
+			new IdentityMap<Class<? extends Event>, IdentitySet<EventSubscriber>>();
 
 	final ArrayQueue<Event> events = new ArrayQueue<Event>();
 	boolean processing = false;
@@ -22,7 +24,7 @@ public class EventBus {
 		return DEFAULT;
 	}
 
-	public boolean register(EventSubscriber subscriber, int eventType) {
+	public boolean register(EventSubscriber subscriber, Class<? extends Event> eventType) {
 		IdentitySet<EventSubscriber> subscribers = subscription.get(eventType);
 		if (subscribers == null) {
 			subscribers = new IdentitySet<EventSubscriber>();
@@ -31,7 +33,7 @@ public class EventBus {
 		return subscribers.add(subscriber);
 	}
 
-	public boolean unregister(EventSubscriber subscriber, int eventType) {
+	public boolean unregister(EventSubscriber subscriber, Class<? extends Event> eventType) {
 		IdentitySet<EventSubscriber> subscribers = subscription.get(eventType);
 		if (subscribers == null) {
 			return false;
@@ -40,13 +42,16 @@ public class EventBus {
 	}
 
 	protected void postInternal(final Event event) {
-		IdentitySet<EventSubscriber> subscribers = subscription.get(event.getType());
+		IdentitySet<EventSubscriber> subscribers = subscription.get(event.getClass());
 		if (subscribers == null) {
 			return;
 		}	
 		for (EventSubscriber subscriber : subscribers) {
 			subscriber.onEvent(event);
 		}
+		
+		// Now we free this class, so it might be reused
+		Pools.free(event);
 	}
 	
 	/**
