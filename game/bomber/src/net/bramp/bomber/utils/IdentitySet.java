@@ -1,4 +1,4 @@
-package net.bramp.bomber.utils.events;
+package net.bramp.bomber.utils;
 
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.

@@ -9,22 +9,20 @@ import com.badlogic.gdx.utils.Pools;
 
 public final class Bomb extends MapObject implements AnimationInterface {
 
-	final GameScreen game;
-
-	final Player owner;
-	final int flame_length;
+	public final Player owner;
+	public final int flame_length;
+	
+	public final boolean dud = false;
 	
 	final AnimationComponent animation;
 
 	public Bomb(GameScreen game, Player owner, int map_x, int map_y) {
-		super(game.getMap());
+		super(game.map);
 
-		animation = new AnimationComponent(1.0f);
+		animation = new AnimationComponent(0.1f);
 
-		this.game = game;
 		this.owner = owner;
-
-		this.flame_length = owner.flame_length;
+		this.flame_length = owner.flame_length; // We snap shot the flame (the moment it's dropped)
 
 		// Setup textures
 		TextureRegion frames[] = game.getTextureRepository().getBomb();
@@ -36,6 +34,9 @@ public final class Bomb extends MapObject implements AnimationInterface {
 		setMapPosition(map_x, map_y);
 	}
 
+	@Override
+	public void dispose() {}
+
 	public void update (final float dt) {
 		animation.update(this, dt);
 	}
@@ -46,8 +47,6 @@ public final class Bomb extends MapObject implements AnimationInterface {
 		event.bomb = this;
 
 		EventBus.getDefault().post(event);
-
-		game.removeSprite(this);
 	}
 
 	@Override

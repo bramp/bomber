@@ -2,10 +2,18 @@ package net.bramp.bomber.screens;
 
 import net.bramp.bomber.Bomb;
 import net.bramp.bomber.Config;
+import net.bramp.bomber.Flame;
 import net.bramp.bomber.Map;
 import net.bramp.bomber.Player;
+import net.bramp.bomber.SoundEngine;
 import net.bramp.bomber.SpriteInterface;
 import net.bramp.bomber.TextureRepository;
+import net.bramp.bomber.events.BombExplodedEvent;
+import net.bramp.bomber.events.FlameEvent;
+import net.bramp.bomber.events.WallExplodeEvent;
+import net.bramp.bomber.utils.events.Event;
+import net.bramp.bomber.utils.events.EventBus;
+import net.bramp.bomber.utils.events.EventListener;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -14,9 +22,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.Pools;
 import com.badlogic.gdx.utils.SnapshotArray;
 
-public class GameScreen implements ApplicationListener {
+public class GameScreen implements ApplicationListener, Disposable, EventListener {
 
 	private static final boolean DEBUG = Config.DEBUG;
 
@@ -36,12 +47,14 @@ public class GameScreen implements ApplicationListener {
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
 
+	SoundEngine sound;
 	GameScreenInputProcessor inputProcessor;
 
 	BitmapFont debugFont;
 
 	final SnapshotArray<SpriteInterface> sprites = new SnapshotArray<SpriteInterface>(false, 16, SpriteInterface.class);
-
+	final Array<Flame> flames = new Array<Flame>();
+	
 	@Override
 	public void create() {
 
@@ -55,7 +68,7 @@ public class GameScreen implements ApplicationListener {
 
 		// Load all the textures
 		textureRepo = new TextureRepository(atlas);
-		
+
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, w, h);
 
@@ -69,14 +82,19 @@ public class GameScreen implements ApplicationListener {
 		players[number_of_players++] = new Player(this, map.getPlayerStart(3));
 
 		debugFont = new BitmapFont();
-		
+
 		inputProcessor = new GameScreenInputProcessor(this);
 		Gdx.input.setInputProcessor(inputProcessor);
 
+		sound = new SoundEngine();
+
+		EventBus.getDefault().register(this, 
+				BombExplodedEvent.class, FlameEvent.class, WallExplodeEvent.class);
 	}
 
 	@Override
 	public void dispose() {
+		EventBus.getDefault().unregister(this);
 		batch.dispose();
 		atlas.dispose();
 	}
@@ -159,18 +177,6 @@ public class GameScreen implements ApplicationListener {
 		return textureRepo;
 	}
 
-	public float getMapX(int map_x) {
-		return 0;
-	}
-
-	public float getMapY(int map_y) {
-		return 0;
-	}
-
-	public Map getMap() {
-		return map;
-	}
-
 	public BitmapFont getDebugFont() {
 		return debugFont;
 	}
@@ -181,6 +187,8 @@ public class GameScreen implements ApplicationListener {
 
 	public void removeSprite(SpriteInterface sprite) {
 		sprites.removeValue(sprite, true);
+		
+		// TODO Try pooling the sprite
 	}
 	
 	/**
@@ -192,24 +200,60 @@ public class GameScreen implements ApplicationListener {
 	 */
 	public boolean dropBomb(Player player, int map_x, int map_y) {
 		// TODO check tile doesn't already have a bomb
+		
 		addSprite( new Bomb(this, player, map_x, map_y) );
 		return true;
 	}
 
-	public void bombExploded(Bomb bomb) {
-		//removeSprite(bomb);
-		//bomb.getOwner().bombExploded(bomb);
+	public void onEvent(BombExplodedEvent event) {
+		Bomb bomb = event.bomb;
 
 		// Add flames
+		if (!bomb.dud) {
+			// Broadcast flame event
+			FlameEvent flameEvent = Pools.obtain(FlameEvent.class);
+			flameEvent.flame = new Flame(this, bomb);
+			flameEvent.type = FlameEvent.FLAME_START;
 
-		// Players check (each update) if they are on a flame
+			EventBus.getDefault().post(flameEvent);
+		} else {
+			// TODO Broadcast dud event
+		}
+
+		// Remove bomb
+		removeSprite(bomb);
 	}
 
-	/**
-	 * A player died
-	 * @param player
-	 */
-	public void killPlayer(Player player) {
-		
+	public void onEvent(FlameEvent event) {
+		if (event.type == FlameEvent.FLAME_START) {
+			map.setFire(event.flame, true);
+			addSprite(event.flame);
+
+		} else if (event.type == FlameEvent.FLAME_END) {
+			map.setFire(event.flame, false);
+			flames.removeValue(event.flame, true);
+
+			// We might have turned off a flame we shoudn't have, so lets readd them all
+			for (int i = 0, len = flames.size; i < len; i++) {
+				map.setFire(flames.items[i], true);
+			}
+
+			removeSprite(event.flame);
+		}
+	}
+	
+	public void onEvent(WallExplodeEvent event) {
+		map.dropWall(event.map_x, event.map_y);
+	}
+
+	@Override
+	public void onEvent(Event event) {
+		if (event instanceof BombExplodedEvent) {
+			onEvent((BombExplodedEvent)event);
+		} else if (event instanceof FlameEvent) {
+			onEvent((FlameEvent) event);
+		} else if (event instanceof WallExplodeEvent) {
+			onEvent((WallExplodeEvent) event);
+		}
 	}
 }

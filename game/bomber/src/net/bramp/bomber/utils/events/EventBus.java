@@ -1,6 +1,7 @@
 package net.bramp.bomber.utils.events;
 
 import net.bramp.bomber.utils.ArrayQueue;
+import net.bramp.bomber.utils.IdentitySet;
 
 import com.badlogic.gdx.utils.IdentityMap;
 import com.badlogic.gdx.utils.Pools;
@@ -12,8 +13,8 @@ import com.badlogic.gdx.utils.Pools;
  */
 public class EventBus {
 
-	final IdentityMap<Class<? extends Event>, IdentitySet<EventSubscriber>> subscription = 
-			new IdentityMap<Class<? extends Event>, IdentitySet<EventSubscriber>>();
+	final IdentityMap<Class<? extends Event>, IdentitySet<EventListener>> subscription = 
+			new IdentityMap<Class<? extends Event>, IdentitySet<EventListener>>();
 
 	final ArrayQueue<Event> events = new ArrayQueue<Event>();
 	boolean processing = false;
@@ -24,29 +25,45 @@ public class EventBus {
 		return DEFAULT;
 	}
 
-	public boolean register(EventSubscriber subscriber, Class<? extends Event> eventType) {
-		IdentitySet<EventSubscriber> subscribers = subscription.get(eventType);
-		if (subscribers == null) {
-			subscribers = new IdentitySet<EventSubscriber>();
-			subscription.put(eventType, subscribers);
+	public void register(EventListener subscriber, Class<? extends Event> ... eventTypes) {
+		for(int i = 0, len = eventTypes.length; i < len; i++) {
+			register(subscriber, eventTypes[i]);
 		}
-		return subscribers.add(subscriber);
 	}
 
-	public boolean unregister(EventSubscriber subscriber, Class<? extends Event> eventType) {
-		IdentitySet<EventSubscriber> subscribers = subscription.get(eventType);
+	public void register(EventListener subscriber, Class<? extends Event> eventType) {
+		IdentitySet<EventListener> subscribers = subscription.get(eventType);
 		if (subscribers == null) {
-			return false;
+			subscribers = new IdentitySet<EventListener>();
+			subscription.put(eventType, subscribers);
 		}
-		return subscribers.remove(subscriber);
+		subscribers.add(subscriber);
+	}
+
+	/**
+	 * Brute force unregister
+	 * @param subscriber
+	 * @return
+	 */
+	public void unregister(EventListener subscriber) {
+		for (IdentitySet<EventListener> subscribers : subscription.values()) {
+			subscribers.remove(subscriber);
+		}
+	}
+	
+	public void unregister(EventListener subscriber, Class<? extends Event> eventType) {
+		IdentitySet<EventListener> subscribers = subscription.get(eventType);
+		if (subscribers != null) {
+			subscribers.remove(subscriber);
+		}
 	}
 
 	protected void postInternal(final Event event) {
-		IdentitySet<EventSubscriber> subscribers = subscription.get(event.getClass());
+		IdentitySet<EventListener> subscribers = subscription.get(event.getClass());
 		if (subscribers == null) {
 			return;
 		}	
-		for (EventSubscriber subscriber : subscribers) {
+		for (EventListener subscriber : subscribers) {
 			subscriber.onEvent(event);
 		}
 		

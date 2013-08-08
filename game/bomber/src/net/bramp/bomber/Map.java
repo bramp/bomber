@@ -6,9 +6,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Disposable;
 import com.google.common.base.Preconditions;
 
-public final class Map {
+public final class Map implements Disposable {
 	private static final boolean DEBUG = Config.DEBUG;
 
 	// If things are odd, they 
@@ -18,13 +19,12 @@ public final class Map {
 
 	public static final byte BLOCK_MASK = WALL | BRICK;
 
-	public static final byte POWERUP_BOMB =  0x4; // 0b00 0100
-	public static final byte POWERUP_FLAME = 0x8; // 0b00 1000
-	public static final byte POWERUP_SPEED = 0xc; // 0b00 1100
+	public static final byte POWERUP_BOMB =  0x04; // 0b00 0100
+	public static final byte POWERUP_FLAME = 0x08; // 0b00 1000
+	public static final byte POWERUP_SPEED = 0x0c; // 0b00 1100
 	public static final byte POWERUP_MASK  = POWERUP_BOMB | POWERUP_FLAME | POWERUP_SPEED;
 	
 	public static final byte ON_FIRE   = 0x10; // 0b01 0000
-	public static final byte FIRE_MASK = 0x30;
 
 	/**
 	 * Probability of a square having a brick wall (at round start)
@@ -36,7 +36,6 @@ public final class Map {
 
 	private final GameScreen game;
 	private final TextureRegion[] tile_textures;
-	private final TextureRegion[] fire_textures;
 	
 	//
 	final int width, height;
@@ -50,7 +49,6 @@ public final class Map {
 
 		final TextureRepository repo = game.getTextureRepository();
 		tile_textures  = repo.getMapTile();
-		fire_textures = repo.getFlame();
 
 		this.width = width;
 		this.height = height;
@@ -59,6 +57,12 @@ public final class Map {
 		setupWalls();
 	}
 
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	/**
 	 * Setups the map grid to have a standard layout
 	 */
@@ -113,14 +117,10 @@ public final class Map {
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				int block = map[x][y] & BLOCK_MASK;
-				int fire  = map[x][y] & FIRE_MASK;
 				float screenX = x * tile_width;
 				float screenY = y * tile_height;
 
 				batch.draw(tile_textures[block], screenX, screenY, tile_width, tile_height);
-				
-				if (fire > 0)
-					batch.draw(fire_textures[fire], screenX, screenY, tile_width, tile_height);
 
 				if (DEBUG)
 					font.draw(batch, x + "," + y, screenX, screenY + tile_height);
@@ -190,19 +190,19 @@ public final class Map {
 	 * @param min_y
 	 * @param max_y
 	 */
-	public void setOnFire(int origin_x, int origin_y, int min_x, int max_x, int min_y, int max_y, boolean onFire) {
+	public void setFire(Flame flame, boolean onFire) {
 		if (onFire) {
-			for (int x = min_x; x < max_x; x++)
-				map[x][origin_y] |= ON_FIRE;
+			for (int x = flame.min_x; x < flame.max_x; x++)
+				map[x][flame.map_y] |= ON_FIRE;
 
-			for (int y = min_y; y < max_y; y++)
-				map[origin_x][y] |= ON_FIRE;
+			for (int y = flame.min_y; y < flame.max_y; y++)
+				map[flame.map_x][y] |= ON_FIRE;
 		} else {
-			for (int x = min_x; x < max_x; x++)
-				map[x][origin_y] &= ~FIRE_MASK;
+			for (int x = flame.min_x; x < flame.max_x; x++)
+				map[x][flame.map_y] &= ~ON_FIRE;
 
-			for (int y = min_y; y < max_y; y++)
-				map[origin_x][y] &= ~FIRE_MASK;			
+			for (int y = flame.min_y; y < flame.max_y; y++)
+				map[flame.map_x][y] &= ~ON_FIRE;			
 		}
 	}
 
@@ -219,5 +219,9 @@ public final class Map {
 	public boolean isFree(int map_x, int map_y) {
 		//System.out.printf("%d %d %d\n", map_x, map_y, map[map_x][map_y]);
 		return (map[map_x][map_y] & WALL) != WALL;
+	}
+
+	public void dropWall(int map_x, int map_y) {
+		map[map_x][map_y] &= ~BLOCK_MASK;
 	}
 }

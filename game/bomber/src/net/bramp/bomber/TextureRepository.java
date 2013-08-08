@@ -18,30 +18,29 @@ public class TextureRepository {
 	public TextureRepository(TextureAtlas atlas) {
 		this.atlas = atlas;
 
-		bomb  = findRegions(atlas, "Bomb");
-		flame = findRegions(atlas, "Flame");
+		bomb  = findRegions("Bomb");
+		flame = findRegions("Flame");
 
-		player_walking[Direction.UP]    = findRegions(atlas, "Bman_B");
-		player_walking[Direction.DOWN]  = findRegions(atlas, "Bman_F");
-		player_walking[Direction.LEFT]  = findRegions(atlas, "Bman_L");
-		player_walking[Direction.RIGHT] = findRegions(atlas, "Bman_R");
+		player_walking[Direction.UP]    = findRegions("Bman_B");
+		player_walking[Direction.DOWN]  = findRegions("Bman_F");
+		player_walking[Direction.LEFT]  = findRegions("Bman_L");
+		player_walking[Direction.RIGHT] = findRegions("Bman_R");
 
 		map_tile = new TextureAtlas.AtlasRegion[16];
-		map_tile[Map.BLANK] = findRegion(atlas, "BackgroundTile");
-		map_tile[Map.WALL]  = findRegion(atlas, "SolidBlock");
-		map_tile[Map.BRICK] = findRegion(atlas, "ExplodableBlock");
+		map_tile[Map.BLANK] = findRegion("BackgroundTile");
+		map_tile[Map.WALL]  = findRegion("SolidBlock");
+		map_tile[Map.BRICK] = findRegion("ExplodableBlock");
 
-		map_tile[Map.POWERUP_BOMB]  = findRegion(atlas, "BombPowerup");
-		map_tile[Map.POWERUP_FLAME] = findRegion(atlas, "FlamePowerup");
-		map_tile[Map.POWERUP_SPEED] = findRegion(atlas, "SpeedPowerup");
-
+		map_tile[Map.POWERUP_BOMB]  = findRegion("BombPowerup");
+		map_tile[Map.POWERUP_FLAME] = findRegion("FlamePowerup");
+		map_tile[Map.POWERUP_SPEED] = findRegion("SpeedPowerup");
 	}
-	
-	private static TextureRegion[] findRegions(TextureAtlas atlas, String name) {
+
+	private TextureRegion[] findRegions(String name) {
 		return atlas.findRegions(name).toArray(TextureRegion.class);
 	}
 	
-	private static TextureRegion findRegion(TextureAtlas atlas, String name) {
+	private TextureRegion findRegion(String name) {
 		return atlas.findRegion(name);
 	}
 

@@ -10,6 +10,7 @@ import net.bramp.bomber.utils.events.Event;
  *
  */
 public class MapMoveEvent extends Event {
+
 	public MapObject object;
 
 	@Override

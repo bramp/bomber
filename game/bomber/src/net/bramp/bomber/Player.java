@@ -1,21 +1,22 @@
 package net.bramp.bomber;
 
 import net.bramp.bomber.events.BombExplodedEvent;
+import net.bramp.bomber.events.PlayerAndFireEvent;
 import net.bramp.bomber.screens.GameScreen;
 import net.bramp.bomber.utils.events.Event;
 import net.bramp.bomber.utils.events.EventBus;
-import net.bramp.bomber.utils.events.EventSubscriber;
+import net.bramp.bomber.utils.events.EventListener;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Pools;
 
-public final class Player extends MapObject implements AnimationInterface, EventSubscriber {
+public final class Player extends MapObject implements AnimationInterface, EventListener {
 	private static final boolean DEBUG = Config.DEBUG;
 
 	final GameScreen game;
-
 	final TextureRegion[][] walking_frames;
 
 	/**
@@ -31,7 +32,7 @@ public final class Player extends MapObject implements AnimationInterface, Event
 	final MapMovementComponent movement;
 
 	public Player(GameScreen game, int[] map_coord) {
-		super(game.getMap());
+		super(game.map);
 
 		this.game = game;
 		
@@ -47,8 +48,13 @@ public final class Player extends MapObject implements AnimationInterface, Event
 		tile_margin_y = (getHeight() - map.getTileHeight()) / 2;
 
 		setMapPosition(map_coord[0], map_coord[1]);
-		
+
 		EventBus.getDefault().register(this, BombExplodedEvent.class);
+	}
+
+	@Override
+	public void dispose() {
+		EventBus.getDefault().unregister(this);
 	}
 
 	@Override
@@ -72,6 +78,15 @@ public final class Player extends MapObject implements AnimationInterface, Event
 			die();
 		}
 	}
+	
+	protected void die() {
+		//TODO animation.setFrames(sprite, frames); // On fire
+
+		PlayerAndFireEvent event = Pools.obtain(PlayerAndFireEvent.class);
+		event.player = this;
+
+		EventBus.getDefault().post(event);
+	}
 
 	@Override
 	public void draw(SpriteBatch batch) {
@@ -82,11 +97,6 @@ public final class Player extends MapObject implements AnimationInterface, Event
 			font.setColor(Color.BLACK);
 			font.draw(batch, map_x + "," + map_y, getX(), getY() + getHeight() / 2);
 		}
-	}
-
-	protected void die() {
-		alive = false;
-		game.killPlayer(this);
 	}
 	
 	/**
@@ -121,7 +131,7 @@ public final class Player extends MapObject implements AnimationInterface, Event
 			assert(deployed_bombs >= 0);
 		}
 	}
-	
+
 	@Override
 	public void onEvent(Event e) {
 		if (e instanceof BombExplodedEvent) {
