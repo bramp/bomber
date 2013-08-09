@@ -1,4 +1,4 @@
-package net.bramp.bomber;
+package net.bramp.bomber.sound;
 
 import net.bramp.bomber.events.FlameEvent;
 import net.bramp.bomber.utils.events.Event;
@@ -30,9 +30,9 @@ public class SoundEngine implements Disposable, EventListener {
 	public void onEvent(Event e) {
 		if (e instanceof FlameEvent) {
 			FlameEvent fe = (FlameEvent)e;
-			if (fe.type == FlameEvent.FLAME_START) {
+			if (fe.type == FlameEvent.START) {
 				Gdx.app.log(TAG, "Boom");
-			} else if (fe.type == FlameEvent.FLAME_END) {
+			} else if (fe.type == FlameEvent.END) {
 				Gdx.app.log(TAG, "Fin");
 			}
 			// TODO Play sound

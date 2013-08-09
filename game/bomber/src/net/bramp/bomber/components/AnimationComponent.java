@@ -1,4 +1,6 @@
-package net.bramp.bomber;
+package net.bramp.bomber.components;
+
+import net.bramp.bomber.AnimationInterface;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -36,7 +38,7 @@ public class AnimationComponent {
 	 * resets animation_time and animation_frame
 	 * @param frames
 	 */
-	protected void setFrames(final Sprite sprite, TextureRegion[] frames) {
+	public void setFrames(final Sprite sprite, TextureRegion[] frames) {
 		Preconditions.checkNotNull(frames);
 		Preconditions.checkArgument(frames.length > 0);
 

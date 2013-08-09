@@ -1,7 +1,7 @@
 package net.bramp.bomber.screens;
 
 import net.bramp.bomber.Direction;
-import net.bramp.bomber.Player;
+import net.bramp.bomber.objects.Player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;

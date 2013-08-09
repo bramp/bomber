@@ -1,6 +1,8 @@
-package net.bramp.bomber;
+package net.bramp.bomber.objects;
 
-import net.bramp.bomber.events.BombExplodedEvent;
+import net.bramp.bomber.AnimationInterface;
+import net.bramp.bomber.components.AnimationComponent;
+import net.bramp.bomber.events.BombEvent;
 import net.bramp.bomber.screens.GameScreen;
 import net.bramp.bomber.utils.events.EventBus;
 
@@ -43,7 +45,8 @@ public final class Bomb extends MapObject implements AnimationInterface {
 
 	@Override
 	public void animationEnded() {
-		BombExplodedEvent event = Pools.obtain(BombExplodedEvent.class);
+		BombEvent event = Pools.obtain(BombEvent.class);
+		event.type = this.dud ? BombEvent.FAILED : BombEvent.EXPLODED;
 		event.bomb = this;
 
 		EventBus.getDefault().post(event);

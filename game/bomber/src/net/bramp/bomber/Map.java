@@ -1,5 +1,6 @@
 package net.bramp.bomber;
 
+import net.bramp.bomber.objects.Flame;
 import net.bramp.bomber.screens.GameScreen;
 
 import com.badlogic.gdx.graphics.Color;

@@ -1,11 +1,14 @@
-package net.bramp.bomber;
+package net.bramp.bomber.objects;
 
+import net.bramp.bomber.AnimationInterface;
+import net.bramp.bomber.Map;
+import net.bramp.bomber.SpriteInterface;
+import net.bramp.bomber.components.AnimationComponent;
 import net.bramp.bomber.events.FlameEvent;
 import net.bramp.bomber.events.WallExplodeEvent;
 import net.bramp.bomber.screens.GameScreen;
 import net.bramp.bomber.utils.events.EventBus;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Pools;
@@ -17,7 +20,7 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 	/**
 	 * Coordinates of the center of the flame
 	 */
-	int min_x, min_y, max_x, max_y;
+	public int min_x, min_y, max_x, max_y;
 
 	final int flame_length;
 
@@ -58,7 +61,7 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 		WallExplodeEvent event = Pools.obtain(WallExplodeEvent.class);
 		event.map_x = map_x;
 		event.map_y = map_y;
-		
+
 		EventBus.getDefault().post(event);
 	}
 	
@@ -72,7 +75,7 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 
 		// Left
 		for (int i = 1; i <= flame_length; i++) {
-			int t = map.getTile(map_x - i, map_y);
+			int t = map.getTile(map_x - i, map_y) | Map.BLOCK_MASK;
 			if (t != Map.BLANK) {
 				if (t == Map.BRICK) {
 					min_x--;
@@ -85,7 +88,7 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 
 		// Right
 		for (int i = 1; i <= flame_length; i++) {
-			int t = map.getTile(map_x + i, map_y);
+			int t = map.getTile(map_x + i, map_y) | Map.BLOCK_MASK ;
 			if (t != Map.BLANK) {
 				if (t == Map.BRICK) {
 					max_x++;
@@ -98,7 +101,7 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 
 		// Up
 		for (int i = 1; i <= flame_length; i++) {
-			int t = map.getTile(map_x, map_y + i);
+			int t = map.getTile(map_x, map_y + i) | Map.BLOCK_MASK;
 			if (t != Map.BLANK) {
 				if (t == Map.BRICK) {
 					max_y++;
@@ -111,7 +114,7 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 
 		// Down
 		for (int i = 1; i <= flame_length; i++) {
-			int t = map.getTile(map_x, map_y - i);
+			int t = map.getTile(map_x, map_y - i) | Map.BLOCK_MASK;
 			if (t != Map.BLANK) {
 				if (t == Map.BRICK) {
 					min_y--;
@@ -121,8 +124,6 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 			}
 			min_y--;
 		}
-
-		Gdx.app.log(TAG, "Flame X:" + min_x + "-" + max_x + " Y:" + min_y + "-" + max_y );
 	}
 
 	public void update (final float dt) {
@@ -133,7 +134,7 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 	public void animationEnded() {
 		FlameEvent event = Pools.obtain(FlameEvent.class);
 		event.flame = this;
-		event.type = FlameEvent.FLAME_END;
+		event.type = FlameEvent.END;
 
 		EventBus.getDefault().post(event);
 	}
@@ -144,23 +145,26 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 	public void draw(SpriteBatch batch) {
 		float screen_x, screen_y;
 		
+		final float width = getWidth();
+		final float height = getWidth();
+
 		final float tile_width  = map.getTileWidth();
 		final float tile_height = map.getTileHeight();
 
 		screen_x = map.getScreenX(min_x) + tile_margin_x;
 		screen_y = map.getScreenY(map_y) + tile_margin_y;
 		for (int x = min_x; x <= max_x; x++) {
-			batch.draw(this, screen_x, screen_y, tile_width, tile_height);
-			screen_x += map.getTileWidth();
+			batch.draw(this, screen_x, screen_y, width, height);
+			screen_x += tile_width;
 		}
 
 		screen_x = map.getScreenX(map_x) + tile_margin_x;
 		screen_y = map.getScreenY(min_y) + tile_margin_y;
 		for (int y = min_y; y <= max_y; y++) {
 			if (y != map_y)
-				batch.draw(this, screen_x, screen_y, tile_width, tile_height);
+				batch.draw(this, screen_x, screen_y, width, height);
 			
-			screen_y += map.getTileHeight();
+			screen_y += tile_height;
 		}
 	}
 }

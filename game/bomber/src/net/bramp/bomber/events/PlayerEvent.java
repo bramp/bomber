@@ -1,6 +1,6 @@
 package net.bramp.bomber.events;
 
-import net.bramp.bomber.MapObject;
+import net.bramp.bomber.objects.MapObject;
 import net.bramp.bomber.utils.events.Event;
 
 /**
@@ -9,7 +9,7 @@ import net.bramp.bomber.utils.events.Event;
  * @author bramp
  *
  */
-public class MapMoveEvent extends Event {
+public class PlayerEvent extends Event {
 
 	public MapObject object;
 

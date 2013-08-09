@@ -1,8 +1,11 @@
-package net.bramp.bomber;
+package net.bramp.bomber.components;
 
 import com.badlogic.gdx.utils.Pools;
 
-import net.bramp.bomber.events.MapMoveEvent;
+import net.bramp.bomber.Direction;
+import net.bramp.bomber.Map;
+import net.bramp.bomber.events.PlayerEvent;
+import net.bramp.bomber.objects.MapObject;
 import net.bramp.bomber.utils.events.EventBus;
 
 /**
@@ -19,17 +22,17 @@ public class MapMovementComponent {
 	/**
 	 * Which direction am I facing
 	 */
-	int direction = Direction.DOWN;
+	public int direction = Direction.DOWN;
 
 	/**
 	 * Distance moved in one frame (in pixels)
 	 */
-	private static final int DISTANCE = 4;
+	public static final int DISTANCE = 4;
 	
 	/**
 	 * Am I walking right now?
 	 */
-	boolean walking = false;
+	public boolean walking = false;
 
 	/**
 	 * If we are trying to move, then move us
@@ -97,7 +100,7 @@ public class MapMovementComponent {
 				player.map_y = new_y;
 
 				// Send Event to tell others we've moved
-				MapMoveEvent event = Pools.obtain(MapMoveEvent.class);
+				PlayerEvent event = Pools.obtain(PlayerEvent.class);
 				event.object = player;
 
 				EventBus.getDefault().post(event);

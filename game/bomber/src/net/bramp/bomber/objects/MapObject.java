@@ -1,4 +1,7 @@
-package net.bramp.bomber;
+package net.bramp.bomber.objects;
+
+import net.bramp.bomber.Map;
+import net.bramp.bomber.SpriteInterface;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 

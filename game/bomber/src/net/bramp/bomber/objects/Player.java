@@ -1,6 +1,11 @@
-package net.bramp.bomber;
+package net.bramp.bomber.objects;
 
-import net.bramp.bomber.events.BombExplodedEvent;
+import net.bramp.bomber.AnimationInterface;
+import net.bramp.bomber.Config;
+import net.bramp.bomber.Direction;
+import net.bramp.bomber.components.AnimationComponent;
+import net.bramp.bomber.components.MapMovementComponent;
+import net.bramp.bomber.events.BombEvent;
 import net.bramp.bomber.events.PlayerAndFireEvent;
 import net.bramp.bomber.screens.GameScreen;
 import net.bramp.bomber.utils.events.Event;
@@ -49,7 +54,7 @@ public final class Player extends MapObject implements AnimationInterface, Event
 
 		setMapPosition(map_coord[0], map_coord[1]);
 
-		EventBus.getDefault().register(this, BombExplodedEvent.class);
+		EventBus.getDefault().register(this, BombEvent.class);
 	}
 
 	@Override
@@ -125,8 +130,8 @@ public final class Player extends MapObject implements AnimationInterface, Event
 		}
 	}
 
-	public void onEvent(BombExplodedEvent e) {
-		if (e.bomb.owner == this) {
+	public void onEvent(BombEvent e) {
+		if (e.type != BombEvent.DROPPED && e.bomb.owner == this) {
 			deployed_bombs--;
 			assert(deployed_bombs >= 0);
 		}
@@ -134,8 +139,8 @@ public final class Player extends MapObject implements AnimationInterface, Event
 
 	@Override
 	public void onEvent(Event e) {
-		if (e instanceof BombExplodedEvent) {
-			onEvent((BombExplodedEvent)e);
+		if (e instanceof BombEvent) {
+			onEvent((BombEvent)e);
 		}
 	}
 }

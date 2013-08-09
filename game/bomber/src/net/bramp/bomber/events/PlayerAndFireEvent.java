@@ -1,6 +1,6 @@
 package net.bramp.bomber.events;
 
-import net.bramp.bomber.Player;
+import net.bramp.bomber.objects.Player;
 import net.bramp.bomber.utils.events.Event;
 
 /**

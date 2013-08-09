@@ -1,16 +1,16 @@
 package net.bramp.bomber.screens;
 
-import net.bramp.bomber.Bomb;
 import net.bramp.bomber.Config;
-import net.bramp.bomber.Flame;
 import net.bramp.bomber.Map;
-import net.bramp.bomber.Player;
-import net.bramp.bomber.SoundEngine;
 import net.bramp.bomber.SpriteInterface;
 import net.bramp.bomber.TextureRepository;
-import net.bramp.bomber.events.BombExplodedEvent;
+import net.bramp.bomber.events.BombEvent;
 import net.bramp.bomber.events.FlameEvent;
 import net.bramp.bomber.events.WallExplodeEvent;
+import net.bramp.bomber.objects.Bomb;
+import net.bramp.bomber.objects.Flame;
+import net.bramp.bomber.objects.Player;
+import net.bramp.bomber.sound.SoundEngine;
 import net.bramp.bomber.utils.events.Event;
 import net.bramp.bomber.utils.events.EventBus;
 import net.bramp.bomber.utils.events.EventListener;
@@ -89,7 +89,7 @@ public class GameScreen implements ApplicationListener, Disposable, EventListene
 		sound = new SoundEngine();
 
 		EventBus.getDefault().register(this, 
-				BombExplodedEvent.class, FlameEvent.class, WallExplodeEvent.class);
+				BombEvent.class, FlameEvent.class, WallExplodeEvent.class);
 	}
 
 	@Override
@@ -205,19 +205,20 @@ public class GameScreen implements ApplicationListener, Disposable, EventListene
 		return true;
 	}
 
-	public void onEvent(BombExplodedEvent event) {
+	public void onEvent(BombEvent event) {
 		Bomb bomb = event.bomb;
 
 		// Add flames
-		if (!bomb.dud) {
+		if (event.type == BombEvent.EXPLODED) {
 			// Broadcast flame event
 			FlameEvent flameEvent = Pools.obtain(FlameEvent.class);
 			flameEvent.flame = new Flame(this, bomb);
-			flameEvent.type = FlameEvent.FLAME_START;
+			flameEvent.type = FlameEvent.START;
 
 			EventBus.getDefault().post(flameEvent);
-		} else {
-			// TODO Broadcast dud event
+
+		} else if (event.type == BombEvent.FAILED) {
+
 		}
 
 		// Remove bomb
@@ -225,11 +226,11 @@ public class GameScreen implements ApplicationListener, Disposable, EventListene
 	}
 
 	public void onEvent(FlameEvent event) {
-		if (event.type == FlameEvent.FLAME_START) {
+		if (event.type == FlameEvent.START) {
 			map.setFire(event.flame, true);
 			addSprite(event.flame);
 
-		} else if (event.type == FlameEvent.FLAME_END) {
+		} else if (event.type == FlameEvent.END) {
 			map.setFire(event.flame, false);
 			flames.removeValue(event.flame, true);
 
@@ -248,8 +249,8 @@ public class GameScreen implements ApplicationListener, Disposable, EventListene
 
 	@Override
 	public void onEvent(Event event) {
-		if (event instanceof BombExplodedEvent) {
-			onEvent((BombExplodedEvent)event);
+		if (event instanceof BombEvent) {
+			onEvent((BombEvent)event);
 		} else if (event instanceof FlameEvent) {
 			onEvent((FlameEvent) event);
 		} else if (event instanceof WallExplodeEvent) {
