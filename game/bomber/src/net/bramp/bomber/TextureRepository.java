@@ -1,5 +1,7 @@
 package net.bramp.bomber;
 
+import net.bramp.bomber.objects.Powerup;
+
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -14,6 +16,7 @@ public class TextureRepository {
 	final TextureRegion[] bomb;
 	final TextureRegion[] flame;
 	final TextureRegion[] map_tile;
+	final TextureRegion[] powerups;
 
 	public TextureRepository(TextureAtlas atlas) {
 		this.atlas = atlas;
@@ -26,14 +29,15 @@ public class TextureRepository {
 		player_walking[Direction.LEFT]  = findRegions("Bman_L");
 		player_walking[Direction.RIGHT] = findRegions("Bman_R");
 
-		map_tile = new TextureAtlas.AtlasRegion[16];
+		map_tile = new TextureAtlas.AtlasRegion[4];
 		map_tile[Map.BLANK] = findRegion("BackgroundTile");
 		map_tile[Map.WALL]  = findRegion("SolidBlock");
 		map_tile[Map.BRICK] = findRegion("ExplodableBlock");
 
-		map_tile[Map.POWERUP_BOMB]  = findRegion("BombPowerup");
-		map_tile[Map.POWERUP_FLAME] = findRegion("FlamePowerup");
-		map_tile[Map.POWERUP_SPEED] = findRegion("SpeedPowerup");
+		powerups  = new TextureRegion[3];
+		powerups[Powerup.BOMB]  = findRegion("BombPowerup");
+		powerups[Powerup.FLAME] = findRegion("FlamePowerup");
+		powerups[Powerup.SPEED] = findRegion("SpeedPowerup");
 	}
 
 	private TextureRegion[] findRegions(String name) {
@@ -58,5 +62,9 @@ public class TextureRepository {
 
 	public TextureRegion[] getMapTile() {
 		return map_tile;
+	}
+	
+	public TextureRegion[] getPowerups() {
+		return powerups;
 	}
 }

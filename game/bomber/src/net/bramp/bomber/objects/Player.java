@@ -41,12 +41,14 @@ public final class Player extends MapObject implements AnimationInterface, Event
 
 		this.game = game;
 		
-		animation = new AnimationComponent(0.01f);
+		animation = new AnimationComponent(this, 0.01f);
+		animation.setListener(this);
+
 		movement = new MapMovementComponent();
 
 		// Setup textures
 		walking_frames = game.getTextureRepository().getPlayerWalking();
-		animation.setFrames(this, walking_frames[movement.direction]);
+		animation.setFrames(walking_frames[movement.direction]);
 
 		// Offset from the spite's edge to the side of the tile
 		tile_margin_x = (getWidth()  - map.getTileWidth()) / 2;
@@ -76,7 +78,7 @@ public final class Player extends MapObject implements AnimationInterface, Event
 		// TODO input update
 
 		if (movement.walking) {
-			animation.update(this, dt);
+			animation.update(dt);
 		}
 
 		if (map.isOnFire(map_x, map_y)) {
@@ -116,7 +118,7 @@ public final class Player extends MapObject implements AnimationInterface, Event
 			movement.walking = true;
 			if (direction != movement.direction) {
 				movement.direction = direction;
-				animation.setFrames(this, walking_frames[direction]);
+				animation.setFrames(walking_frames[direction]);
 			}
 		}
 	}

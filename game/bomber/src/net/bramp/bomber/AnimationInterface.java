@@ -9,12 +9,12 @@ public interface AnimationInterface {
 	 * @param frame
 	 */
 	void animationFrameEnded(int frame);
-	
+
 	/**
 	 * Called when the sequence of frames ends
 	 */
 	void animationEnded();
-	
+
 	/**
 	 * Sets the current frame
 	 */

@@ -10,6 +10,7 @@ import net.bramp.bomber.events.WallExplodeEvent;
 import net.bramp.bomber.objects.Bomb;
 import net.bramp.bomber.objects.Flame;
 import net.bramp.bomber.objects.Player;
+import net.bramp.bomber.objects.Powerup;
 import net.bramp.bomber.sound.SoundEngine;
 import net.bramp.bomber.utils.events.Event;
 import net.bramp.bomber.utils.events.EventBus;
@@ -22,6 +23,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pools;
@@ -88,8 +90,13 @@ public class GameScreen implements ApplicationListener, Disposable, EventListene
 
 		sound = new SoundEngine();
 
+		registerForEvents();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void registerForEvents() {
 		EventBus.getDefault().register(this, 
-				BombEvent.class, FlameEvent.class, WallExplodeEvent.class);
+				BombEvent.class, FlameEvent.class, WallExplodeEvent.class);		
 	}
 
 	@Override
@@ -243,8 +250,17 @@ public class GameScreen implements ApplicationListener, Disposable, EventListene
 		}
 	}
 	
+	public static final float CHANCE_OF_DROP = 0.5f;
+
 	public void onEvent(WallExplodeEvent event) {
-		map.dropWall(event.map_x, event.map_y);
+		map.destroyWall(event.map_x, event.map_y);
+
+		float r = MathUtils.random();
+		if (r < CHANCE_OF_DROP) {
+			Powerup powerup = new Powerup(this, event.map_x, event.map_y);
+			addSprite(powerup);
+			map.addPowerup(powerup);
+		}
 	}
 
 	@Override

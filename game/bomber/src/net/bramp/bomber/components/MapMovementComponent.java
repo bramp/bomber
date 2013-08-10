@@ -10,7 +10,7 @@ import net.bramp.bomber.utils.events.EventBus;
 
 /**
  * Simple physics component for walking on the map
- * Holds the current location
+ * Holds the current velocity
  * 
  * TODO Rename to MapMovementComponent
  * 
@@ -96,7 +96,7 @@ public class MapMovementComponent {
 			int new_y = map.getMapY(player.getY());
 
 			if (new_x != map_x || new_y != map_y) {
-				player.map_x = new_x; 
+				player.map_x = new_x;
 				player.map_y = new_y;
 
 				// Send Event to tell others we've moved

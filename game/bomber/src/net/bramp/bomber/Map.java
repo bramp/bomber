@@ -1,6 +1,7 @@
 package net.bramp.bomber;
 
 import net.bramp.bomber.objects.Flame;
+import net.bramp.bomber.objects.Powerup;
 import net.bramp.bomber.screens.GameScreen;
 
 import com.badlogic.gdx.graphics.Color;
@@ -20,12 +21,18 @@ public final class Map implements Disposable {
 
 	public static final byte BLOCK_MASK = WALL | BRICK;
 
+	public static final byte ON_FIRE     = 0x10; // 0b01 0000
+	public static final byte HAS_POWERUP = 0x20; // 0b10 0000
+
+	/*
 	public static final byte POWERUP_BOMB =  0x04; // 0b00 0100
 	public static final byte POWERUP_FLAME = 0x08; // 0b00 1000
 	public static final byte POWERUP_SPEED = 0x0c; // 0b00 1100
 	public static final byte POWERUP_MASK  = POWERUP_BOMB | POWERUP_FLAME | POWERUP_SPEED;
+	public static final int POWERUP_SHIFT = 2;
+	*/
+
 	
-	public static final byte ON_FIRE   = 0x10; // 0b01 0000
 
 	/**
 	 * Probability of a square having a brick wall (at round start)
@@ -38,8 +45,8 @@ public final class Map implements Disposable {
 	private final GameScreen game;
 	private final TextureRegion[] tile_textures;
 	
-	//
-	final int width, height;
+	// Width/Height of the map in tiles
+	public final int width, height;
 	final byte[][] map;
 	
 	public Map(GameScreen game, int width, int height) {
@@ -123,8 +130,9 @@ public final class Map implements Disposable {
 
 				batch.draw(tile_textures[block], screenX, screenY, tile_width, tile_height);
 
-				if (DEBUG)
-					font.draw(batch, x + "," + y, screenX, screenY + tile_height);
+				if (DEBUG) {
+					font.draw(batch, x + "," + y + " " + String.format("%02X", map[x][y]), screenX, screenY + tile_height);
+				}
 			}
 		}
 	}
@@ -184,6 +192,7 @@ public final class Map implements Disposable {
 
 	/**
 	 * Set the squares in the bounds on fire
+	 * 
 	 * @param origin_x
 	 * @param origin_y
 	 * @param min_x
@@ -208,7 +217,7 @@ public final class Map implements Disposable {
 	}
 
 	public boolean isOnFire(int map_x, int map_y) {
-		return (map[map_x][map_y] & ON_FIRE) != ON_FIRE;
+		return (map[map_x][map_y] & ON_FIRE) == ON_FIRE;
 	}
 	
 	/**
@@ -218,11 +227,25 @@ public final class Map implements Disposable {
 	 * @return
 	 */
 	public boolean isFree(int map_x, int map_y) {
-		//System.out.printf("%d %d %d\n", map_x, map_y, map[map_x][map_y]);
+		if (map_x <= 0 || map_x >= width || map_y <= 0 || map_x >= height)
+			return false;
+
 		return (map[map_x][map_y] & WALL) != WALL;
 	}
 
-	public void dropWall(int map_x, int map_y) {
+	public void addPowerup(Powerup powerup) {
+		map[powerup.map_x][powerup.map_y] |= HAS_POWERUP;
+	}
+	
+	public void removePowerup(Powerup powerup) {
+		map[powerup.map_x][powerup.map_y] &= ~HAS_POWERUP;
+	}
+	
+	public boolean hasPowerup(int map_x, int map_y) {
+		return (map[map_x][map_y] & HAS_POWERUP) == HAS_POWERUP;
+	}
+
+	public void destroyWall(int map_x, int map_y) {
 		map[map_x][map_y] &= ~BLOCK_MASK;
 	}
 }

@@ -21,14 +21,15 @@ public final class Bomb extends MapObject implements AnimationInterface {
 	public Bomb(GameScreen game, Player owner, int map_x, int map_y) {
 		super(game.map);
 
-		animation = new AnimationComponent(0.1f);
+		animation = new AnimationComponent(this, 0.1f);
+		animation.setListener(this);
 
 		this.owner = owner;
 		this.flame_length = owner.flame_length; // We snap shot the flame (the moment it's dropped)
 
 		// Setup textures
 		TextureRegion frames[] = game.getTextureRepository().getBomb();
-		animation.setFrames(this, frames);
+		animation.setFrames(frames);
 
 		tile_margin_x = (map.getTileWidth()  - getWidth()) / 2;
 		tile_margin_y = (map.getTileHeight() - getHeight()) / 2;
@@ -40,7 +41,7 @@ public final class Bomb extends MapObject implements AnimationInterface {
 	public void dispose() {}
 
 	public void update (final float dt) {
-		animation.update(this, dt);
+		animation.update(dt);
 	}
 
 	@Override
@@ -54,11 +55,6 @@ public final class Bomb extends MapObject implements AnimationInterface {
 
 	@Override
 	public void animationFrameEnded(int frame) {
-		// TODO Auto-generated method stub	
+		//nothing
 	}
-	
-	public Player getOwner() {
-		return owner;
-	}
-
 }

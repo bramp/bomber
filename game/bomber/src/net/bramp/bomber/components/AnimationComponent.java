@@ -25,12 +25,20 @@ public class AnimationComponent {
 	 */
 	protected float animation_time = 0.0f;
 
+	final Sprite sprite;
+	private AnimationInterface callback = null;
+	
 	/**
 	 * 
 	 * @param frame_interval Time between image frames (in seconds)
 	 */
-	public AnimationComponent(float frame_interval) {
+	public AnimationComponent(final Sprite sprite, float frame_interval) {
+		this.sprite = sprite;
 		this.frame_interval = frame_interval;
+	}
+	
+	public void setListener(AnimationInterface callback) {
+		this.callback = callback;
 	}
 
 	/**
@@ -38,7 +46,7 @@ public class AnimationComponent {
 	 * resets animation_time and animation_frame
 	 * @param frames
 	 */
-	public void setFrames(final Sprite sprite, TextureRegion[] frames) {
+	public void setFrames(TextureRegion[] frames) {
 		Preconditions.checkNotNull(frames);
 		Preconditions.checkArgument(frames.length > 0);
 
@@ -54,18 +62,21 @@ public class AnimationComponent {
 		sprite.setRegion(first);
 	}
 
-	public void update(final AnimationInterface sprite, final float dt) {
+	public void update(final float dt) {
 		animation_time += dt;
 		if (animation_time > frame_interval) {
 			animation_time -= frame_interval;
 
-			sprite.animationFrameEnded(animation_frame);
+			if (callback != null)
+				callback.animationFrameEnded(animation_frame);
 
 			animation_frame++;
 			if (animation_frame >= frames.length) {
 				// Loop the animation
 				animation_frame = 0;
-				sprite.animationEnded();
+
+				if (callback != null)
+					callback.animationEnded();
 			}
 
 			sprite.setRegion( frames[animation_frame] );

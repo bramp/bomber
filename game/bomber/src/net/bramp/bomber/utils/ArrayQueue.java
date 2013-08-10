@@ -3,6 +3,8 @@ package net.bramp.bomber.utils;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import com.badlogic.gdx.utils.Array;
+
 /**
  * 
  * Array backed Queue using a bounded array to avoid array copies when pushing/poping
@@ -61,6 +63,19 @@ public class ArrayQueue<E> implements Iterable<E> {
 		if (last == q.length)
 			last = 0; // wrap-around
 		size++;
+	}
+	
+	public void push(Array<E> items) {
+		final int newsize = size + items.size;
+		if (newsize >= q.length)
+			resize(Math.max(8, (int)(newsize * 1.75f)));
+
+		for (int i = 0, len = items.size; i < len; i++) {
+			q[last++] = items.get(i); // add item
+			if (last == q.length)
+				last = 0; // wrap-around
+		}
+		size = newsize;
 	}
 
 	public E pop() {

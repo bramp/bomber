@@ -7,10 +7,12 @@ import net.bramp.bomber.components.AnimationComponent;
 import net.bramp.bomber.events.FlameEvent;
 import net.bramp.bomber.events.WallExplodeEvent;
 import net.bramp.bomber.screens.GameScreen;
+import net.bramp.bomber.utils.events.Event;
 import net.bramp.bomber.utils.events.EventBus;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pools;
 
 public final class Flame extends MapObject implements SpriteInterface, AnimationInterface {
@@ -29,6 +31,11 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 	final AnimationComponent animation;
 
 	/**
+	 * Queue of events for the walls which will be destroyed at the end of this flame
+	 */
+	Array<Event> destoriedWalls = new Array<Event>(false, 4);
+
+	/**
 	 * Creates a new flame (starting at map_x,map_y)
 	 * @param game
 	 * @param map_x
@@ -39,11 +46,12 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 
 		this.flame_length = bomb.flame_length;
 
-		this.animation = new AnimationComponent(0.5f);
+		this.animation = new AnimationComponent(this, 0.5f);
+		this.animation.setListener(this);
 
 		// Setup textures
 		TextureRegion frames[] = game.getTextureRepository().getFlame();
-		animation.setFrames(this, frames);
+		animation.setFrames(frames);
 
 		tile_margin_x = (map.getTileWidth()  - getWidth()) / 2;
 		tile_margin_y = (map.getTileHeight() - getHeight()) / 2;
@@ -54,32 +62,35 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 
 
 	@Override
-	public void dispose() {}
+	public void dispose() {
+		destoriedWalls.clear();
+		
+	}
 	
-	protected void postWallExplode(int map_x, int map_y) {
+	protected void queueWallExplodeEvent(int map_x, int map_y) {
 		// Broadcast flame event
 		WallExplodeEvent event = Pools.obtain(WallExplodeEvent.class);
 		event.map_x = map_x;
 		event.map_y = map_y;
 
-		EventBus.getDefault().post(event);
+		destoriedWalls.add(event);
 	}
 	
 	/**
-	 * Calculates the farest left/right/up/down the flame goes
+	 * Calculates the farthest left/right/up/down the flame goes
 	 */
 	protected void calculateBounds() {
-		
+
 		min_x = max_x = map_x;
 		min_y = max_y = map_y;
 
 		// Left
 		for (int i = 1; i <= flame_length; i++) {
-			int t = map.getTile(map_x - i, map_y) | Map.BLOCK_MASK;
+			int t = map.getTile(map_x - i, map_y) & Map.BLOCK_MASK;
 			if (t != Map.BLANK) {
 				if (t == Map.BRICK) {
 					min_x--;
-					postWallExplode(min_x, map_y);
+					queueWallExplodeEvent(min_x, map_y);
 				}
 				break;
 			}
@@ -88,11 +99,11 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 
 		// Right
 		for (int i = 1; i <= flame_length; i++) {
-			int t = map.getTile(map_x + i, map_y) | Map.BLOCK_MASK ;
+			int t = map.getTile(map_x + i, map_y) & Map.BLOCK_MASK ;
 			if (t != Map.BLANK) {
 				if (t == Map.BRICK) {
 					max_x++;
-					postWallExplode(max_x, map_y);
+					queueWallExplodeEvent(max_x, map_y);
 				}
 				break;
 			}
@@ -101,11 +112,11 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 
 		// Up
 		for (int i = 1; i <= flame_length; i++) {
-			int t = map.getTile(map_x, map_y + i) | Map.BLOCK_MASK;
+			int t = map.getTile(map_x, map_y + i) & Map.BLOCK_MASK;
 			if (t != Map.BLANK) {
 				if (t == Map.BRICK) {
 					max_y++;
-					postWallExplode(map_x, max_y);
+					queueWallExplodeEvent(map_x, max_y);
 				}
 				break;
 			}
@@ -114,11 +125,11 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 
 		// Down
 		for (int i = 1; i <= flame_length; i++) {
-			int t = map.getTile(map_x, map_y - i) | Map.BLOCK_MASK;
+			int t = map.getTile(map_x, map_y - i) & Map.BLOCK_MASK;
 			if (t != Map.BLANK) {
 				if (t == Map.BRICK) {
 					min_y--;
-					postWallExplode(map_x, min_y);
+					queueWallExplodeEvent(map_x, min_y);
 				}
 				break;
 			}
@@ -127,15 +138,17 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 	}
 
 	public void update (final float dt) {
-		animation.update(this, dt);
+		animation.update(dt);
 	}
 
 	@Override
 	public void animationEnded() {
+
 		FlameEvent event = Pools.obtain(FlameEvent.class);
 		event.flame = this;
 		event.type = FlameEvent.END;
 
+		EventBus.getDefault().postAll(destoriedWalls);
 		EventBus.getDefault().post(event);
 	}
 

@@ -3,6 +3,7 @@ package net.bramp.bomber.utils.events;
 import net.bramp.bomber.utils.ArrayQueue;
 import net.bramp.bomber.utils.IdentitySet;
 
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IdentityMap;
 import com.badlogic.gdx.utils.Pools;
 
@@ -58,7 +59,7 @@ public class EventBus {
 		}
 	}
 
-	protected void postInternal(final Event event) {
+	protected void postOne(final Event event) {
 		IdentitySet<EventListener> subscribers = subscription.get(event.getClass());
 		if (subscribers == null) {
 			return;
@@ -71,12 +72,7 @@ public class EventBus {
 		Pools.free(event);
 	}
 	
-	/**
-	 * Posts a event, and processes them in the order they arrive 
-	 * @param event
-	 */
-	public void post(final Event event) {
-		events.push(event);
+	protected void postInternal() {
 
 		// We are currently processing, so defer until later
 		if (processing)
@@ -87,11 +83,29 @@ public class EventBus {
 
 			Event e;
 			while ((e = events.pop()) != null) {
-				postInternal(e);
+				postOne(e);
 			}
 
 		} finally {
 			processing = false;
-		}
+		}		
+	}
+	
+	/**
+	 * Posts a event, and processes them in the order they arrive 
+	 * @param event
+	 */
+	public void post(final Event event) {
+		events.push(event);
+		postInternal();
+	}
+	
+	/**
+	 * Posts multiple events, and processes them in the order they arrive 
+	 * @param event
+	 */
+	public void postAll(final Array<Event> event) {
+		events.push(event);
+		postInternal();
 	}
 }
