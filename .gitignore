@@ -1,5 +1,8 @@
 game/bomber-android/bin/
+game/bomber-android/gen/
 game/bomber-desktop/bin/
 game/bomber-html/war/
+game/bomber-ouya/bin/
+game/bomber-ouya/gen/
 game/bomber/bin/
 
