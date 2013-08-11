@@ -4,17 +4,21 @@ import net.bramp.bomber.objects.MapObject;
 import net.bramp.bomber.utils.events.Event;
 
 /**
- * A MapObject moved on the map
- * 
  * @author bramp
  *
  */
-public class PlayerEvent extends Event {
+public class MapObjectEvent extends Event {
 
+	public static final int SPAWN = 0;
+	public static final int MOVED = 1;
+	public static final int DIE   = 2;
+
+	public int type = -1;
 	public MapObject object;
 
 	@Override
 	public void reset() {
+		type = -1;
 		object = null;
 	}
 	

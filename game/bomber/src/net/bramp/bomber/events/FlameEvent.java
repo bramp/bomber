@@ -14,11 +14,12 @@ public class FlameEvent extends Event {
 	public static final int START = 0;
 	public static final int END = 1;
 	
-	public int type;
+	public int type = -1;
 	public Flame flame;
 
 	@Override
 	public void reset() {
+		type = -1;
 		flame = null;
 	}
 

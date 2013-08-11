@@ -10,17 +10,18 @@ import com.badlogic.gdx.utils.Disposable;
 
 /**
  * Deals with all the sound
+ * 
  * @author bramp
  *
  */
 public class SoundEngine implements Disposable, EventListener {
 
 	private static String TAG = "SoundEngine";
-	
+
 	public SoundEngine() {
 		EventBus.getDefault().register(this, FlameEvent.class);
 	}
-	
+
 	@Override
 	public void dispose() {
 		EventBus.getDefault().unregister(this);		
@@ -39,4 +40,11 @@ public class SoundEngine implements Disposable, EventListener {
 		}
 	}
 
+	public void pause() {
+		// TODO
+	}
+
+	public void resume() {
+		// TODO
+	}
 }

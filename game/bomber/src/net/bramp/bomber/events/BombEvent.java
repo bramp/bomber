@@ -15,11 +15,12 @@ public class BombEvent extends Event {
 	public static final int EXPLODED = 1;
 	public static final int FAILED   = 2; // because it was a dud
 
-	public int type;
+	public int type = -1;
 	public Bomb bomb;
 
 	@Override
 	public void reset() {
+		type = -1;
 		bomb = null;
 	}
 }

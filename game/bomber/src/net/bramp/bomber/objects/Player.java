@@ -6,7 +6,7 @@ import net.bramp.bomber.Direction;
 import net.bramp.bomber.components.AnimationComponent;
 import net.bramp.bomber.components.MapMovementComponent;
 import net.bramp.bomber.events.BombEvent;
-import net.bramp.bomber.events.PlayerAndFireEvent;
+import net.bramp.bomber.events.MapObjectEvent;
 import net.bramp.bomber.screens.GameScreen;
 import net.bramp.bomber.utils.events.Event;
 import net.bramp.bomber.utils.events.EventBus;
@@ -89,8 +89,9 @@ public final class Player extends MapObject implements AnimationInterface, Event
 	protected void die() {
 		//TODO animation.setFrames(sprite, frames); // On fire
 
-		PlayerAndFireEvent event = Pools.obtain(PlayerAndFireEvent.class);
-		event.player = this;
+		MapObjectEvent event = Pools.obtain(MapObjectEvent.class);
+		event.type = MapObjectEvent.DIE;
+		event.object = this;
 
 		EventBus.getDefault().post(event);
 	}

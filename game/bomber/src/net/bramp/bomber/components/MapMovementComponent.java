@@ -4,7 +4,7 @@ import com.badlogic.gdx.utils.Pools;
 
 import net.bramp.bomber.Direction;
 import net.bramp.bomber.Map;
-import net.bramp.bomber.events.PlayerEvent;
+import net.bramp.bomber.events.MapObjectEvent;
 import net.bramp.bomber.objects.MapObject;
 import net.bramp.bomber.utils.events.EventBus;
 
@@ -100,7 +100,8 @@ public class MapMovementComponent {
 				player.map_y = new_y;
 
 				// Send Event to tell others we've moved
-				PlayerEvent event = Pools.obtain(PlayerEvent.class);
+				MapObjectEvent event = Pools.obtain(MapObjectEvent.class);
+				event.type = MapObjectEvent.MOVED;
 				event.object = player;
 
 				EventBus.getDefault().post(event);

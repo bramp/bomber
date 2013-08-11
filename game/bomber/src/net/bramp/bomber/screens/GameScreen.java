@@ -31,7 +31,7 @@ import com.badlogic.gdx.utils.SnapshotArray;
 
 public class GameScreen implements ApplicationListener, Disposable, EventListener {
 
-	private static final boolean DEBUG = Config.DEBUG;
+	private static final boolean FPS = Config.FPS;
 
 	/**
 	 * Simple value of what time is now (in seconds from game start)
@@ -151,7 +151,7 @@ public class GameScreen implements ApplicationListener, Disposable, EventListene
 				case 1: players[0].draw(batch);
 			}
 
-			if (DEBUG) {
+			if (FPS) {
 				debugFont.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 20, 20);
 			}
 
@@ -170,10 +170,12 @@ public class GameScreen implements ApplicationListener, Disposable, EventListene
 
 	@Override
 	public void pause() {
+		sound.pause();
 	}
 
 	@Override
 	public void resume() {
+		sound.pause();
 	}
 	
 	public Player[] getPlayers() {
@@ -253,13 +255,15 @@ public class GameScreen implements ApplicationListener, Disposable, EventListene
 	public static final float CHANCE_OF_DROP = 0.5f;
 
 	public void onEvent(WallExplodeEvent event) {
-		map.destroyWall(event.map_x, event.map_y);
-
-		float r = MathUtils.random();
-		if (r < CHANCE_OF_DROP) {
-			Powerup powerup = new Powerup(this, event.map_x, event.map_y);
-			addSprite(powerup);
-			map.addPowerup(powerup);
+		if (event.type == WallExplodeEvent.END) {
+			map.destroyWall(event.map_x, event.map_y);
+	
+			float r = MathUtils.random();
+			if (r < CHANCE_OF_DROP) {
+				Powerup powerup = new Powerup(this, event.map_x, event.map_y);
+				addSprite(powerup);
+				map.addPowerup(powerup);
+			}
 		}
 	}
 

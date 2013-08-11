@@ -33,7 +33,7 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 	/**
 	 * Queue of events for the walls which will be destroyed at the end of this flame
 	 */
-	Array<Event> destoriedWalls = new Array<Event>(false, 4);
+	Array<Event> queuedEvents = new Array<Event>(false, 4);
 
 	/**
 	 * Creates a new flame (starting at map_x,map_y)
@@ -63,17 +63,30 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 
 	@Override
 	public void dispose() {
-		destoriedWalls.clear();
+		queuedEvents.clear();
 		
 	}
 	
-	protected void queueWallExplodeEvent(int map_x, int map_y) {
-		// Broadcast flame event
-		WallExplodeEvent event = Pools.obtain(WallExplodeEvent.class);
-		event.map_x = map_x;
-		event.map_y = map_y;
-
-		destoriedWalls.add(event);
+	protected void postAndQueueWallExplodeEvent(int map_x, int map_y) {
+		if (!map.isOnFire(map_x, map_y)) {
+			WallExplodeEvent event;
+	
+			// Post this event now
+			event = Pools.obtain(WallExplodeEvent.class);
+			event.type = WallExplodeEvent.START;
+			event.map_x = map_x;
+			event.map_y = map_y;
+	
+			EventBus.getDefault().post(event);
+	
+			// Queue this event for later
+			event = Pools.obtain(WallExplodeEvent.class);
+			event.type = WallExplodeEvent.END;
+			event.map_x = map_x;
+			event.map_y = map_y;
+	
+			queuedEvents.add(event);
+		}
 	}
 	
 	/**
@@ -90,7 +103,7 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 			if (t != Map.BLANK) {
 				if (t == Map.BRICK) {
 					min_x--;
-					queueWallExplodeEvent(min_x, map_y);
+					postAndQueueWallExplodeEvent(min_x, map_y);
 				}
 				break;
 			}
@@ -103,7 +116,7 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 			if (t != Map.BLANK) {
 				if (t == Map.BRICK) {
 					max_x++;
-					queueWallExplodeEvent(max_x, map_y);
+					postAndQueueWallExplodeEvent(max_x, map_y);
 				}
 				break;
 			}
@@ -116,7 +129,7 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 			if (t != Map.BLANK) {
 				if (t == Map.BRICK) {
 					max_y++;
-					queueWallExplodeEvent(map_x, max_y);
+					postAndQueueWallExplodeEvent(map_x, max_y);
 				}
 				break;
 			}
@@ -129,7 +142,7 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 			if (t != Map.BLANK) {
 				if (t == Map.BRICK) {
 					min_y--;
-					queueWallExplodeEvent(map_x, min_y);
+					postAndQueueWallExplodeEvent(map_x, min_y);
 				}
 				break;
 			}
@@ -148,7 +161,7 @@ public final class Flame extends MapObject implements SpriteInterface, Animation
 		event.flame = this;
 		event.type = FlameEvent.END;
 
-		EventBus.getDefault().postAll(destoriedWalls);
+		EventBus.getDefault().postAll(queuedEvents);
 		EventBus.getDefault().post(event);
 	}
 
